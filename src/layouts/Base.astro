@@ -1,9 +1,12 @@
 ---
+import Icones from "../components/Icones.astro";
+
 interface Props {
   title: string;
   description?: string;
 }
-const { title, description = "Faço a operação rodar melhor com dados, automação e IA." } = Astro.props;
+const { title, description = "Dhiego Spinillo. Faço a operação rodar melhor com dados, automação e IA." } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 <!doctype html>
 <html lang="pt-BR">
@@ -11,30 +14,88 @@ const { title, description = "Faço a operação rodar melhor com dados, automa�
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
     <title>{title}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" />
   </head>
   <body>
+    <header class="topo">
+      <a class="marca" href={`${base}/`}>✦ Spinillo</a>
+      <nav aria-label="Seções">
+        <a href={`${base}/#enxergar`}>Enxergar</a>
+        <a href={`${base}/#automatizar`}>Automatizar</a>
+        <a href={`${base}/#construir`}>Construir</a>
+        <a href={`${base}/#sobre`}>Sobre</a>
+      </nav>
+      <Icones />
+    </header>
     <slot />
+    <footer class="rodape">
+      <span>Dhiego Spinillo · São Paulo</span>
+      <Icones />
+    </footer>
   </body>
 </html>
 
 <style is:global>
   :root {
+    color-scheme: light;
     --bg: #e3e2de;
     --ink: #111111;
     --muted: #55554f;
+    --faint: #8d8c86;
     --line: #c6c5bf;
-    --font: "Archivo", system-ui, sans-serif;
+    --font: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --wrap: 1120px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+      --bg: #151513;
+      --ink: #ecebe6;
+      --muted: #a8a7a0;
+      --faint: #74736d;
+      --line: #34332f;
+    }
   }
   * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
   body {
     margin: 0;
-    padding: 0 16px;
+    padding: 0 20px;
     background: var(--bg);
     color: var(--ink);
     font: 16px/1.55 var(--font);
+    overflow-wrap: break-word;
+  }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+  .topo, .rodape, main {
+    max-width: var(--wrap);
+    margin: 0 auto;
+  }
+  .topo {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding-block: 24px;
+  }
+  .topo > * { min-width: 0; }
+  .marca { font-weight: 700; text-decoration: none; letter-spacing: -.01em; }
+  .topo nav { display: flex; gap: 22px; font-size: 14px; color: var(--muted); }
+  .topo nav a { text-decoration: none; }
+  .topo nav a:hover { color: var(--ink); }
+  @media (max-width: 760px) { .topo nav { display: none; } }
+
+  .rodape {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    border-top: 1px solid var(--line);
+    padding-block: 28px 40px;
+    font-size: 14px; color: var(--muted);
   }
 </style>

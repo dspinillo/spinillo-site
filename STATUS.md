@@ -10,7 +10,7 @@ Projeto criado em 07/11/2026. Plano visual F0 com duas rodadas de design; escolh
 | Bloco | Estado |
 |---|---|
 | F0 · plano e direção | ✅ direção E, eixo em três pilares |
-| F1 · no ar no domínio | 🟡 T1.1 ✅ (dspinillo.github.io/spinillo-site) |
+| F1 · no ar no domínio | 🟡 T1.1 ✅ no ar · T1.2 e T1.3 prontas na branch local `f1-home`, aguardando revisão |
 | F2 · cases dos três pilares | ⬜ |
 | F3 · painel do mercado | ⬜ |
 | F4 · distribuição | ⬜ |
@@ -22,5 +22,6 @@ Projeto criado em 07/11/2026. Plano visual F0 com duas rodadas de design; escolh
 - **Decidido:** sem e-mail no site; contato só por LinkedIn e GitHub, com ícones.
 - **Decidido:** eixo "FAÇO A OPERAÇÃO RODAR MELHOR <COM DADOS, AUTOMAÇÃO E IA>" com índice em três verbos (Enxergar, Automatizar, Construir); painel começa pela foto da semana.
 - **Decidido (07/11):** sem foto (o leitor já viu o rosto no LinkedIn; a E é tipográfica); valor da Loft liberado; CV para baixar = versão nova mesclando Business Architect com Dados-IA, gerada em `~/Documents/Curriculos/fontes/build.py` na T1.3.
-- **Pendente:** nada bloqueando a F1.
-- **Próxima ação:** ▶️ T1.2: tokens e layout da direção E, claro e escuro. Aproveitar para subir as actions para versões com Node 24 (o deploy avisa que checkout/setup-node v4 rodam forçadas no Node 24).
+- **T1.2/T1.3 (branch `f1-home`, NÃO publicada):** layout da direção E com tema claro e escuro (segue o sistema), header com âncoras e ícones LinkedIn/GitHub, home com título, faixa de empresas, índice dos três pilares (8 trabalhos, ainda sem página de case), seção Sobre e botão do CV. CV novo em `public/cv/dhiego-spinillo-cv.pdf` (variante `operacao` do build.py: sem telefone e sem e-mail, SLA "perto de 90%"). Actions atualizadas para checkout/setup-node v5 e upload-pages-artifact v4.
+- **Pendente:** revisão do texto da home, do Sobre e do CV pelo Dhiego; depois merge na main (deploy) e T1.4 (domínio).
+- **Próxima ação:** ▶️ Dhiego revisa `f1-home` (npm run dev); aprovado → merge na main e T1.4 (DNS na UOL).

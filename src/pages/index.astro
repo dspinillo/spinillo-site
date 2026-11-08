@@ -1,27 +1,132 @@
 ---
 import Base from "../layouts/Base.astro";
+import { pilares, empresas } from "../data/trabalhos";
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const pad = (n: number) => String(n).padStart(3, "0");
+let n = 0;
+const secoes = pilares.map((p) => ({
+  ...p,
+  trabalhos: p.trabalhos.map((t) => ({ ...t, n: pad(++n) })),
+}));
 ---
-<Base title="Dhiego Spinillo">
+<Base title="Dhiego Spinillo · Operação, dados, automação e IA">
   <main>
-    <h1>FAÇO A OPERAÇÃO RODAR MELHOR <span>&lt;COM DADOS, AUTOMAÇÃO E IA&gt;</span></h1>
-    <p>Dhiego Spinillo. Site em construção.</p>
+    <section class="hero">
+      <h1>Faço a operação rodar melhor <span>&lt;com dados, automação e IA&gt;</span></h1>
+      <div class="lado">
+        <p class="quem">Dhiego Spinillo. 13 anos entre operação e dados, os últimos 8 em empresas em hipercrescimento.</p>
+        <p class="sub">Liderei times na Loft e na BHub. Hoje também construo os agentes que faltam.</p>
+        <a class="botao" href={`${base}/cv/dhiego-spinillo-cv.pdf`}>Baixar CV <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+
+    <ul class="empresas" aria-label="Empresas onde trabalhei">
+      {empresas.map((e) => <li>{e}</li>)}
+    </ul>
+
+    {secoes.map((p, i) => (
+      <section class="pilar" id={p.id}>
+        <header>
+          <h2><sup>({pad(i + 1)})</sup> {p.verbo}</h2>
+          <p>{p.frase}</p>
+        </header>
+        <ol class="indice">
+          {p.trabalhos.map((t) => (
+            <li>
+              <span class="n">{t.n}</span>
+              <span class="t">{t.titulo}</span>
+              <span class="onde">{t.onde}</span>
+              <span class="num">{t.numero}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
+    ))}
+
+    <section class="pilar sobre" id="sobre">
+      <header>
+        <h2><sup>({pad(secoes.length + 1)})</sup> Sobre</h2>
+      </header>
+      <div class="texto">
+        <p>Há 20 anos trabalho entre negócio e dados, sempre olhando para processos e números, levantando hipóteses e resolvendo problemas da operação.</p>
+        <p>Na Glovo, cuidei do analytics de operações no Brasil durante o hipercrescimento: SLAs, unit economics, forecast de demanda e antifraude. Na Loft, liderei 16 pessoas em Analytics e Payments no canal de corretores. Na BHub, criei do zero uma linha de negócio que chegou a cerca de 5 mil clientes, montei as automações que rodavam mais de 100 mil tarefas por mês e, como Head de Dados, coloquei IA em produção com uma regra simples: o SQL calcula, a IA escreve e cada frase aponta para a origem.</p>
+        <p>Os projetos pessoais desta página existem pelo mesmo motivo: quando a ferramenta não existe, eu construo.</p>
+        <a class="botao" href={`${base}/cv/dhiego-spinillo-cv.pdf`}>Baixar CV em PDF <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
   </main>
 </Base>
 
 <style>
-  main {
-    max-width: 1080px;
-    margin: 0 auto;
-    padding-block: 80px;
+  main { display: flex; flex-direction: column; gap: 72px; padding-block: 40px 88px; }
+
+  .hero {
+    display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    gap: 40px; align-items: end;
   }
   h1 {
-    margin: 0 0 24px;
-    font-size: clamp(36px, 7vw, 72px);
-    font-weight: 800;
-    font-stretch: 115%;
-    line-height: 0.98;
-    letter-spacing: -0.02em;
+    margin: 0;
+    font-size: clamp(32px, 7.4vw, 92px);
+    font-weight: 800; font-stretch: 115%;
+    line-height: .95; letter-spacing: -.025em;
+    text-transform: uppercase; text-wrap: balance;
   }
-  h1 span { display: block; font-weight: 500; }
-  p { color: var(--muted); margin: 0; }
+  h1 span { display: block; font-weight: 500; font-size: .62em; line-height: 1.02; margin-top: .25em; }
+  .lado { display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--line); padding-top: 16px; }
+  .quem { margin: 0; font-size: 18px; font-weight: 600; line-height: 1.35; }
+  .sub { margin: 0; color: var(--muted); }
+  .botao {
+    align-self: flex-start; margin-top: 6px;
+    display: inline-flex; gap: 8px; align-items: center;
+    padding: 11px 18px; border-radius: 999px;
+    background: var(--ink); color: var(--bg);
+    font-size: 14px; font-weight: 600; text-decoration: none;
+  }
+  .botao:hover { opacity: .85; }
+
+  .empresas {
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 28px;
+    list-style: none; margin: 0; padding: 18px 0;
+    border-block: 1px solid var(--line);
+    font-weight: 700; font-stretch: 125%; letter-spacing: .06em;
+    text-transform: uppercase; font-size: 14px; color: var(--muted);
+  }
+
+  .pilar header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-bottom: 8px; }
+  h2 {
+    margin: 0;
+    font-size: clamp(30px, 4.4vw, 52px);
+    font-weight: 800; font-stretch: 115%;
+    letter-spacing: -.015em; text-transform: uppercase;
+  }
+  h2 sup { font-size: .32em; font-weight: 500; vertical-align: 1.4em; margin-right: .2em; letter-spacing: 0; }
+  .pilar header p { margin: 0; color: var(--muted); max-width: 46ch; }
+
+  .indice { list-style: none; margin: 0; padding: 0; }
+  .indice li {
+    display: grid; grid-template-columns: 56px minmax(0, 1fr) 140px 220px;
+    align-items: baseline; gap: 16px;
+    padding: 18px 0; border-bottom: 1px solid var(--line);
+    color: var(--faint);
+    transition: color .15s;
+  }
+  .indice li:hover { color: var(--ink); }
+  .n { font-size: 13px; font-variant-numeric: tabular-nums; }
+  .t { font-size: clamp(19px, 2.3vw, 26px); font-weight: 500; font-stretch: 110%; text-transform: uppercase; color: var(--ink); }
+  .onde { font-size: 14px; }
+  .num { font-size: 14px; text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  .sobre .texto { display: flex; flex-direction: column; gap: 14px; max-width: 68ch; }
+  .sobre .texto p { margin: 0; }
+
+  @media (max-width: 860px) {
+    .hero { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+    h1 { font-stretch: 100%; font-size: clamp(30px, 9.6vw, 56px); }
+    h2 { font-stretch: 100%; }
+    .empresas { justify-content: flex-start; font-stretch: 100%; }
+    .indice li { grid-template-columns: 40px minmax(0, 1fr); gap: 4px 12px; }
+    .onde, .num { grid-column: 2; text-align: left; }
+    .onde { display: none; }
+  }
 </style>
