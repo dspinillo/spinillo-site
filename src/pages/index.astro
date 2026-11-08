@@ -1,22 +1,18 @@
 ---
 import Base from "../layouts/Base.astro";
-import { pilares, empresas } from "../data/trabalhos";
+import { getCollection } from "astro:content";
+import { secoes, empresas, pad } from "../data/trabalhos";
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
-const pad = (n: number) => String(n).padStart(3, "0");
-let n = 0;
-const secoes = pilares.map((p) => ({
-  ...p,
-  trabalhos: p.trabalhos.map((t) => ({ ...t, n: pad(++n) })),
-}));
+const casos = new Set((await getCollection("cases")).map((c) => c.id));
 ---
 <Base title="Dhiego Spinillo · Operação, dados, automação e IA">
   <main>
     <section class="hero">
       <h1>Faço a operação rodar melhor <span>&lt;com dados, automação e IA&gt;</span></h1>
       <div class="lado">
-        <p class="quem">Dhiego Spinillo. 13 anos entre operação e dados, os últimos 8 em empresas em hipercrescimento.</p>
-        <p class="sub">Liderei times na Loft e na BHub. Hoje também construo os agentes que faltam.</p>
+        <p class="quem">Dhiego Spinillo. 23 anos de carreira, 13 deles em startups e os últimos 8 em empresas em hipercrescimento.</p>
+        <p class="sub">Liderei times na Glovo, na Loft e na BHub. Hoje também construo os agentes que faltam.</p>
         <a class="botao" href={`${base}/cv/dhiego-spinillo-cv.pdf`}>Baixar CV <span aria-hidden="true">↗</span></a>
       </div>
     </section>
@@ -25,21 +21,26 @@ const secoes = pilares.map((p) => ({
       {empresas.map((e) => <li>{e}</li>)}
     </ul>
 
-    {secoes.map((p, i) => (
+    {secoes.map((p) => (
       <section class="pilar" id={p.id}>
         <header>
-          <h2><sup>({pad(i + 1)})</sup> {p.verbo}</h2>
+          <h2><sup>({p.n})</sup> {p.verbo}</h2>
           <p>{p.frase}</p>
         </header>
         <ol class="indice">
-          {p.trabalhos.map((t) => (
-            <li>
-              <span class="n">{t.n}</span>
-              <span class="t">{t.titulo}</span>
-              <span class="onde">{t.onde}</span>
-              <span class="num">{t.numero}</span>
-            </li>
-          ))}
+          {p.trabalhos.map((t) => {
+            const linha = (
+              <>
+                <span class="n">{t.n}</span>
+                <span class="t">{t.titulo}<span class="linha">{t.linha}</span></span>
+                <span class="onde">{t.onde}</span>
+                <span class="num">{t.numero}</span>
+              </>
+            );
+            return t.caso && casos.has(t.caso)
+              ? <li><a href={`${base}/cases/${t.caso}/`}>{linha}<span class="seta" aria-hidden="true">→</span></a></li>
+              : <li><div>{linha}</div></li>;
+          })}
         </ol>
       </section>
     ))}
@@ -49,7 +50,7 @@ const secoes = pilares.map((p) => ({
         <h2><sup>({pad(secoes.length + 1)})</sup> Sobre</h2>
       </header>
       <div class="texto">
-        <p>Há 20 anos trabalho entre negócio e dados, sempre olhando para processos e números, levantando hipóteses e resolvendo problemas da operação.</p>
+        <p>Há 23 anos trabalho entre negócio e dados, sempre olhando para processos e números, levantando hipóteses e resolvendo problemas da operação.</p>
         <p>Na Glovo, cuidei do analytics de operações no Brasil durante o hipercrescimento: SLAs, unit economics, forecast de demanda e antifraude. Na Loft, liderei 16 pessoas em Analytics e Payments no canal de corretores. Na BHub, criei do zero uma linha de negócio que chegou a cerca de 5 mil clientes, montei as automações que rodavam mais de 100 mil tarefas por mês e, como Head de Dados, coloquei IA em produção com uma regra simples: o SQL calcula, a IA escreve e cada frase aponta para a origem.</p>
         <p>Os projetos pessoais desta página existem pelo mesmo motivo: quando a ferramenta não existe, eu construo.</p>
         <a class="botao" href={`${base}/cv/dhiego-spinillo-cv.pdf`}>Baixar CV em PDF <span aria-hidden="true">↗</span></a>
@@ -104,16 +105,24 @@ const secoes = pilares.map((p) => ({
   .pilar header p { margin: 0; color: var(--muted); max-width: 46ch; }
 
   .indice { list-style: none; margin: 0; padding: 0; }
-  .indice li {
-    display: grid; grid-template-columns: 56px minmax(0, 1fr) 140px 220px;
+  .indice li { border-bottom: 1px solid var(--line); }
+  .indice li > * {
+    display: grid; grid-template-columns: 56px minmax(0, 1fr) 140px 220px 24px;
     align-items: baseline; gap: 16px;
-    padding: 18px 0; border-bottom: 1px solid var(--line);
-    color: var(--faint);
+    padding: 18px 0;
+    color: var(--faint); text-decoration: none;
     transition: color .15s;
   }
-  .indice li:hover { color: var(--ink); }
+  .indice a:hover, .indice a:focus-visible { color: var(--ink); }
+  .indice a:hover .seta { transform: translateX(4px); }
+  .seta { grid-column: 5; text-align: right; transition: transform .15s; }
   .n { font-size: 13px; font-variant-numeric: tabular-nums; }
   .t { font-size: clamp(19px, 2.3vw, 26px); font-weight: 500; font-stretch: 110%; text-transform: uppercase; color: var(--ink); }
+  .linha {
+    display: block; margin-top: 6px; max-width: 58ch;
+    font-size: 15px; font-weight: 400; font-stretch: 100%; line-height: 1.45;
+    text-transform: none; color: var(--muted);
+  }
   .onde { font-size: 14px; }
   .num { font-size: 14px; text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
 
@@ -125,7 +134,8 @@ const secoes = pilares.map((p) => ({
     h1 { font-stretch: 100%; font-size: clamp(30px, 9.6vw, 56px); }
     h2 { font-stretch: 100%; }
     .empresas { justify-content: flex-start; font-stretch: 100%; }
-    .indice li { grid-template-columns: 40px minmax(0, 1fr); gap: 4px 12px; }
+    .indice li > * { grid-template-columns: 40px minmax(0, 1fr) 20px; gap: 4px 12px; }
+    .seta { grid-column: 3; grid-row: 1; }
     .onde, .num { grid-column: 2; text-align: left; }
     .onde { display: none; }
   }

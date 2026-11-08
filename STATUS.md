@@ -1,6 +1,6 @@
 # spinillo-site · Status
 
-> Última atualização: **07/11/2026** · frente ativa: F1 · HEAD: `a344bb7`
+> Última atualização: **08/11/2026** · frente ativa: F2 · branch local `f1-home` (não publicada)
 > Legenda: ✅ feito · 🟡 parcial · ▶️ próximo · ⏸️ aguardando · 🔒 bloqueado · ⬜ não iniciado
 
 ## Estado atual (leia primeiro)
@@ -11,11 +11,20 @@ Projeto criado em 07/11/2026. Plano visual F0 com duas rodadas de design; escolh
 |---|---|
 | F0 · plano e direção | ✅ direção E, eixo em três pilares |
 | F1 · no ar no domínio | 🟡 T1.1 ✅ no ar · T1.2 e T1.3 prontas na branch local `f1-home`, aguardando revisão |
-| F2 · cases dos três pilares | ⬜ |
+| F2 · cases dos três pilares | 🟡 8 rascunhos prontos, aguardando revisão dele |
 | F3 · painel do mercado | ⬜ |
 | F4 · distribuição | ⬜ |
 
 ## Onde paramos (última sessão)
+
+- **Feito (08/11):** F2 em rascunho na `f1-home`. Coleção `src/content/cases/` (schema em `src/content.config.ts`) e página `src/pages/cases/[id].astro` (rótulo, título, resumo, faixa de números, blocos Problema / Decisão / O que quebrou / Confiabilidade, anterior/próximo). Oito cases: SLA, antifraude, régua, briefing, Triagem, Radar, revisaAI e **Oráculo Flow** (novo, 009 em Construir). Índice da home ganhou frase de contexto sob cada título; linhas com case viram link. "O mercado de vagas de dados" segue sem link (é a F3).
+- **Feito (08/11):** marca `dhiego.spinillo` com ponto laranja (`--accent`), favicon `ds.`, cabeçalho fixo na rolagem, **tema escuro desligado em teste** (bloco mantido em `Base.astro`, media query que nunca casa).
+- **Corrigido (08/11):** 23 anos de carreira (não 20), 13 deles em startups; "Liderei times na Glovo, na Loft e na BHub". CV regenerado (`build.py`, 5 ocorrências) e copiado para `public/cv/`.
+- **Pendente dele:** revisar os 8 textos; preencher **Confiabilidade** nos 4 profissionais e **O que quebrou** do briefing (marcados `[Para você preencher.]`); conferir os comentários `<!-- REVISAR -->` (SLA: ligação com a inconsistência de responsáveis e como o painel abria o atraso; antifraude: portarias públicas); aprovar as analogias (happy hour, elevador, academia, gabarito, prova oral, padaria, síndico); números públicos do revisaAI (300+ contas, 7 pagantes); decidir tema claro fixo ou não; "painel para ~50 gestores" no SLA é o mesmo painel?
+- **Próxima ação:** ▶️ revisão dele dos cases → ajustes → merge na main → T1.4 (DNS).
+
+<details>
+<summary>Sessão 07/11/2026</summary>
 
 - **Feito:** docs N2, plano F0 com mockups usando números reais da coleta de 04 a 06/11 (608 vagas, 417 empresas).
 - **Validado:** T1.1: repo público github.com/dspinillo/spinillo-site criado, Pages por Actions, deploy verde, https://dspinillo.github.io/spinillo-site/ responde 200 com o título. DNS de spinillo.com.br levantado de fora: NS na UOL, MX com 5 registros Google, site da UOL desativado.
@@ -26,3 +35,5 @@ Projeto criado em 07/11/2026. Plano visual F0 com duas rodadas de design; escolh
 - **Decidido (07/11):** não publicar a F1 sozinha. O site só vai para a main (e para o domínio) com os cases da F2 prontos e validados por ele; sem pressa. As linhas do índice não clicam porque as páginas de case ainda não existem.
 - **Pendente:** revisão do texto da home, do Sobre e do CV (inclusive o bullet da Loft sobre os ~R$ 100 mil das portarias, agora em CV público) e se os números ficam visíveis na home.
 - **Próxima ação:** ▶️ F2 na branch `f1-home`: páginas de case (problema, decisão, resultado/o que quebrou, confiabilidade) para os 7 trabalhos que não são o painel, índice clicável. Profissionais (SLA, antifraude, régua, briefing): rascunho a partir dos números confirmados, confiabilidade vem dele. Pessoais (Triagem, Radar, revisaAI): rascunho completo. Depois: revisão dele → merge na main → T1.4 (DNS).
+
+</details>

@@ -1,6 +1,6 @@
 # spinillo-site · Handoff
 
-> Atualizado em **07/11/2026** · branch `main` · commit seguro `a344bb7`
+> Atualizado em **08/11/2026** · branch `f1-home` (local, não enviada) · `main` segura em `a344bb7`
 
 ## Objetivo acordado
 
@@ -26,7 +26,14 @@ Build:    npm run build (Astro 7, exige Node >= 22.23); deploy por push na main
 
 ## Próxima ação (checklist)
 
-1. [ ] Ler STATUS.md. Trabalho continua na branch local `f1-home` (T1.2 e T1.3 prontas, NÃO publicadas, NÃO enviadas ao GitHub).
-2. [ ] F2: páginas de case (Astro content collection em `src/content/cases/`), uma por trabalho de `src/data/trabalhos.ts` exceto o painel; índice da home vira link. Formato do mockup da régua no plano F0: título caixa alta, faixa de números, blocos Problema / Decisão / O que quebrou / Confiabilidade.
-3. [ ] Números: só os confirmados (fonte: memória `numeros-defensaveis` do career-copilot). Sem R$ interno da BHub; SLA "perto de 90%"; valor da Loft liberado; conversão 15%→50% fora.
-4. [ ] Revisão completa dele (home, sobre, CV, cases) → merge na main (deploy no github.io) → T1.4 domínio (trocar `site`/`base` do astro.config.mjs junto).
+1. [ ] Ler STATUS.md. Tudo está na branch local `f1-home`, sem push.
+2. [ ] Revisão dele dos 8 cases (`npm run dev`, http://localhost:4321/spinillo-site/). Ajustar texto conforme as respostas; tirar os `[Para você preencher.]` e os `<!-- REVISAR -->`.
+3. [ ] Decidir o tema: claro fixo (apagar o bloco escuro em `src/layouts/Base.astro` e anotar no ADR 0002) ou voltar a seguir o sistema.
+4. [ ] Revisão final (home, sobre, CV, cases) → merge na main (deploy no github.io) → T1.4 domínio (trocar `site`/`base` do astro.config.mjs junto).
+
+## Cuidados extras desta fase
+
+- Cases só com números confirmados (memória `numeros-defensaveis` do career-copilot). SLA público = "perto de 90%", sem prazo. Sem R$ interno da BHub.
+- Resumo no frontmatter dos cases vai entre aspas (dois-pontos quebra o YAML).
+- Dev server aberto antes de criar coleção nova não enxerga o conteúdo: reiniciar o `astro dev`.
+- Print rolado no Chrome headless: âncora sai em branco; usar iframe da mesma origem servido pelo dev e `scrollTo`.

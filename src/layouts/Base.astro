@@ -16,7 +16,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "");
     <meta name="description" content={description} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta name="color-scheme" content="light dark" />
+    <meta name="color-scheme" content="light" />
     <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
     <title>{title}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -25,7 +25,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "");
   </head>
   <body>
     <header class="topo">
-      <a class="marca" href={`${base}/`}>✦ Spinillo</a>
+      <a class="marca" href={`${base}/`} aria-label="Dhiego Spinillo, início">dhiego<span class="ponto">.</span>spinillo</a>
       <nav aria-label="Seções">
         <a href={`${base}/#enxergar`}>Enxergar</a>
         <a href={`${base}/#automatizar`}>Automatizar</a>
@@ -34,6 +34,12 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "");
       </nav>
       <Icones />
     </header>
+    <script>
+      const topo = document.querySelector(".topo");
+      const marcar = () => topo?.classList.toggle("rolou", window.scrollY > 8);
+      marcar();
+      addEventListener("scroll", marcar, { passive: true });
+    </script>
     <slot />
     <footer class="rodape">
       <span>Dhiego Spinillo · São Paulo</span>
@@ -50,10 +56,12 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "");
     --muted: #55554f;
     --faint: #8d8c86;
     --line: #c6c5bf;
+    --accent: #e8501c;
     --font: "Archivo", "Helvetica Neue", Arial, sans-serif;
     --wrap: 1120px;
   }
-  @media (prefers-color-scheme: dark) {
+  /* Tema escuro desligado para teste (era: prefers-color-scheme: dark). */
+  @media (prefers-color-scheme: dark) and (max-width: 0px) {
     :root {
       color-scheme: dark;
       --bg: #151513;
@@ -61,10 +69,11 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "");
       --muted: #a8a7a0;
       --faint: #74736d;
       --line: #34332f;
+      --accent: #ff6a33;
     }
   }
   * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
+  html { -webkit-text-size-adjust: 100%; scroll-padding-top: 96px; }
   body {
     margin: 0;
     padding: 0 20px;
@@ -82,11 +91,23 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "");
     margin: 0 auto;
   }
   .topo {
+    position: sticky; top: 0; z-index: 10;
     display: flex; align-items: center; justify-content: space-between; gap: 16px;
-    padding-block: 24px;
+    padding-block: 18px;
+    background: var(--bg);
+    /* O fundo vai de borda a borda da tela, mesmo com o conteúdo limitado a --wrap. */
+    box-shadow: 0 0 0 100vmax var(--bg);
+    clip-path: inset(0 -100vmax -1px);
+    border-bottom: 1px solid transparent;
+    transition: border-color .2s;
   }
+  .topo.rolou { border-bottom-color: var(--line); }
   .topo > * { min-width: 0; }
-  .marca { font-weight: 700; text-decoration: none; letter-spacing: -.01em; }
+  .marca {
+    font-size: 19px; font-weight: 800; font-stretch: 110%;
+    letter-spacing: -.02em; text-decoration: none;
+  }
+  .ponto { color: var(--accent); }
   .topo nav { display: flex; gap: 22px; font-size: 14px; color: var(--muted); }
   .topo nav a { text-decoration: none; }
   .topo nav a:hover { color: var(--ink); }

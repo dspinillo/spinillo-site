@@ -25,3 +25,10 @@ Direção **E · Índice** (gramática das referências 2, 3 e 7 dele):
 - Sem foto (decisão de 07/11): quem chega veio do LinkedIn e já viu o rosto; a presença vem do texto em primeira pessoa ao lado do título.
 - Pendente: tema escuro derivado (inverter tinta e fundo mantendo os cinzas quentes).
 - Mockups: plano F0 (link no auto-memory, fora do repo público).
+
+## Atualização 08/11/2026
+
+- Marca no topo: `dhiego.spinillo`, com o ponto na cor de acento `--accent` (#e8501c no claro, #ff6a33 no escuro). Exceção pedida por ele à regra "sem cor de acento": só o ponto, nada mais. Favicon `ds.` no mesmo estilo.
+- Cabeçalho fixo na rolagem, com filete quando a página rola.
+- Tema escuro desligado em teste (pedido dele): o site fica sempre claro. Decisão final pendente.
+- Página de case: rótulo `(NNN) PILAR · onde · período`, título em caixa alta, resumo, faixa de números com filetes, blocos em duas colunas (título à esquerda), anterior/próximo.
