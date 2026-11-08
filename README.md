@@ -27,7 +27,7 @@ spinillo-site/
 
 ## Como rodar
 
-Ainda sem código (F0). A partir da F1:
+Requer Node 22.23 ou mais novo.
 
 ```bash
 npm install

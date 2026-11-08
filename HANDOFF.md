@@ -1,6 +1,6 @@
 # spinillo-site · Handoff
 
-> Atualizado em **07/11/2026** · branch `main` · sem commits
+> Atualizado em **07/11/2026** · branch `main` · commit seguro `a344bb7`
 
 ## Objetivo acordado
 
@@ -10,8 +10,8 @@ Site pessoal no ar em spinillo.com.br em cerca de uma semana, sem competir com a
 
 ```text
 Dir:      ~/spinillo-site (repo público, fora de qualquer monorepo)
-Branch:   main, sem commits
-Build:    ainda sem código
+Branch:   main (origin = github.com/dspinillo/spinillo-site, público)
+Build:    npm run build (Astro 7, exige Node >= 22.23); deploy por push na main
 ```
 
 ## Cuidados para a próxima sessão
@@ -23,5 +23,6 @@ Build:    ainda sem código
 
 ## Próxima ação (checklist)
 
-1. [ ] Direção escolhida → `decisions/0002-design.md`
-2. [ ] T1.1: Astro + workflow do Pages + `gh repo create dspinillo/spinillo-site --public` (com confirmação)
+1. [ ] T1.2: tokens e layout da direção E (ADR 0002), claro e escuro, 400px sem rolagem lateral
+2. [ ] T1.3: home, sobre, página do CV (CV novo BArch + Dados-IA)
+3. [ ] T1.4: domínio (trocar `site`/`base` do astro.config.mjs junto)
