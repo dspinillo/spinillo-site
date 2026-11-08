@@ -1,6 +1,6 @@
 # spinillo-site · Handoff
 
-> Atualizado em **08/11/2026** · branch `f1-home` (local, não enviada) · `main` segura em `a344bb7`
+> Atualizado em **08/11/2026 (noite)** · branch `f1-home` (local, não enviada) · `main` segura em `a344bb7`
 
 ## Objetivo acordado
 
@@ -26,12 +26,19 @@ Build:    npm run build (Astro 7, exige Node >= 22.23); deploy por push na main
 
 ## Próxima ação (checklist)
 
-1. [ ] Ler STATUS.md. Tudo está na branch local `f1-home`, sem push.
-2. [ ] Revisão dele dos 8 cases (`npm run dev`, http://localhost:4321/spinillo-site/). Ajustar texto conforme as respostas; tirar os `[Para você preencher.]` e os `<!-- REVISAR -->`.
-3. [ ] Decidir o tema: claro fixo (apagar o bloco escuro em `src/layouts/Base.astro` e anotar no ADR 0002) ou voltar a seguir o sistema.
-4. [ ] Revisão final (home, sobre, CV, cases) → merge na main (deploy no github.io) → T1.4 domínio (trocar `site`/`base` do astro.config.mjs junto).
+1. [ ] Escolher a frase do topo da home (opções na última sessão; recomendada: "Liderei times de dados e operação na Glovo, na Loft e na BHub, e ponho a mão no código: painel, automação e agente de IA.").
+2. [ ] Merge da `f1-home` na `main` (ele aprovou em 08/11): o deploy vai para dspinillo.github.io/spinillo-site. Conferir no celular.
+3. [ ] T1.4 domínio, nesta ordem:
+   - GitHub, Settings → Pages → Custom domain: `spinillo.com.br` (cria o arquivo CNAME; manter também `public/CNAME` no repo).
+   - `astro.config.mjs`: `site: "https://spinillo.com.br"`, `base: "/"`. Conferir links com `import.meta.env.BASE_URL`.
+   - UOL (painel de DNS): no raiz, 4 registros A para 185.199.108.153, 185.199.109.153, 185.199.110.153 e 185.199.111.153; `www` CNAME para `dspinillo.github.io`. NUNCA trocar NS nem tocar no MX. Ele loga no painel; eu guio pelo navegador.
+   - Esperar propagação (`dig spinillo.com.br +short`), depois ligar "Enforce HTTPS" no Pages.
+4. [ ] Pendências de conteúdo (respostas dele): campo `revisar` no frontmatter de cada case e cartões `[Para você preencher.]`. Os cartões vazios não aparecem no site; dá para publicar antes e completar depois.
 
 ## Cuidados extras desta fase
+
+- `npm run build` agora roda `scripts/checar-publicacao.mjs`: falha se houver `Para você preencher`, `REVISAR` ou travessão no `dist`. Notas de revisão vão no campo `revisar` do frontmatter (nunca renderizado), não em comentário HTML: o processador de Markdown do Astro 7 publica os comentários.
+- Tema claro fixo (ADR 0002). Figuras em `src/components/figuras/`, declaradas no campo `figura`.
 
 - Cases só com números confirmados (memória `numeros-defensaveis` do career-copilot). SLA público = "perto de 90%", sem prazo. Sem R$ interno da BHub.
 - Resumo no frontmatter dos cases vai entre aspas (dois-pontos quebra o YAML).

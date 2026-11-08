@@ -2,6 +2,10 @@
 titulo: Régua dos certificados
 resumo: "Na linha de certificados digitais que criei do zero na BHub, o follow-up dos certificados vencendo tomava cerca de 5 horas por dia de uma pessoa. Virou uma régua automática, sem contratar ninguém."
 periodo: Business Architect
+sintese:
+  problema: "Com cerca de 5 mil clientes, acompanhar certificado vencendo tomava 5 horas por dia de uma pessoa."
+  feito: "Uma régua do dado ao e-mail, e de volta: a resposta do cliente preenche o card sozinha."
+  resultado: "O follow-up caiu para 30 minutos por dia, sem contratar ninguém."
 numeros:
   - valor: "5 h → 30 min"
     rotulo: de follow-up manual por dia
@@ -11,32 +15,36 @@ numeros:
     rotulo: clientes na linha de certificados
   - valor: "0"
     rotulo: contratações para dar conta
+stack: [Databricks, SQL, Google Sheets, Zapier, Pipefy, SendGrid]
+figura:
+  tipo: fluxo
+  titulo: A régua, toda semana
+  etapas:
+    - { nome: Databricks, nota: "A consulta separa vencidos, a vencer e sem certificado." }
+    - { nome: Planilha, nota: "Recebe a lista e dispara um webhook." }
+    - { nome: Zapier, nota: "Percorre cliente por cliente.", destaque: true }
+    - { nome: Pipefy, nota: "Um card por cliente, na etapa certa." }
+    - { nome: SendGrid, nota: "O e-mail certo para cada situação." }
+  volta: "Quando o cliente responde, um webhook recebe a resposta e preenche o card: datas, o que ele disse e em que etapa está."
+quebrou:
+  titulo: O primeiro disparo grande.
+  texto: "No primeiro envio, de cerca de mil e-mails, o servidor do Google travou depois de 200 ou 300 e bloqueou o envio de todos os projetos da conta. Por sugestão de um engenheiro, migrei para a API do SendGrid em dois dias. Ferramenta de escritório aguenta o piloto. Escala pede serviço feito para isso."
+confiabilidade:
+  texto: "[Para você preencher.] Como você garantiu que o cliente certo recebia o e-mail certo? Por exemplo: conferência da lista contra a base de certificados, teste com amostra antes de ligar, o que acontecia quando um card dava erro."
+revisar:
+  - "quais campos o webhook de resposta preenchia (data de agendamento? tipo de certificado?) e de onde vinha a resposta (formulário, resposta ao e-mail?)."
 ---
 
 ## Problema
 
-Certificado digital vence, e cliente esquece. Quando a linha de certificados cresceu para cerca de 5 mil clientes, o acompanhamento de quem estava vencido, quem ia vencer e quem nem tinha certificado virou trabalho braçal: lista na mão, e-mail um por um, cerca de 5 horas por dia.
+Certificado digital vence, e cliente esquece. Com cerca de 5 mil clientes, acompanhar quem estava vencido, quem ia vencer e quem nem tinha certificado virou lista na mão e e-mail um por um.
 
-Dava para resolver contratando. Mas contratar para copiar e colar e-mail é como contratar alguém para apertar o botão do elevador.
+Dava para contratar. Mas contratar para copiar e colar e-mail é como contratar alguém para apertar o botão do elevador.
 
-## Decisão
+## O que fiz
 
-Montei a régua inteira com as ferramentas que a empresa já tinha:
+A régua inteira com as ferramentas que a empresa já tinha, cuidando da ida e da volta. Ninguém precisa abrir caixa de entrada para atualizar o Pipefy.
 
-1. Toda semana, uma consulta no Databricks gera a lista de vencidos, a vencer e sem certificado.
-2. A lista vai para uma planilha, que dispara um webhook.
-3. O Zapier percorre cada cliente, cria o card no Pipefy e manda o e-mail certo para cada situação.
+Só essa régua rodava de 60 a 70 mil tarefas por mês, dentro das cerca de 100 mil da frente, somando a esteira do paralegal.
 
-O follow-up manual caiu de cerca de 5 horas para 30 minutos por dia. Só essa régua rodava de 60 a 70 mil tarefas por mês, dentro das mais de 100 mil que as automações da frente executavam.
-
-## O que quebrou
-
-**O primeiro disparo grande.** No primeiro envio de cerca de mil e-mails, usamos o servidor de e-mail do Google. Ele travou depois de 200 ou 300 e, de quebra, bloqueou o envio de todos os outros projetos da mesma conta.
-
-Um engenheiro sugeriu o SendGrid, uma plataforma feita para envio em volume. Migrei o disparo para a API dele em dois dias, e a régua voltou a rodar sem travar.
-
-A lição: ferramenta de escritório aguenta o piloto. Para escala, o envio precisa de um serviço feito para isso desde o começo.
-
-## Confiabilidade
-
-**[Para você preencher.]** Como você garantiu que o cliente certo recebia o e-mail certo? Exemplos do que vale contar: conferência da lista do Databricks contra a base de certificados, teste com uma amostra antes de ligar a régua, o que acontecia quando um card dava erro no Pipefy.
+> A automação que só manda e-mail resolve metade. A outra metade é ler a resposta.

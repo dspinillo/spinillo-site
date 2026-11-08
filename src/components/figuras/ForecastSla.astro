@@ -1,0 +1,161 @@
+---
+// Forecast do painel de SLA. O desenho segue o painel real; os números são ilustrativos.
+// Mês que começa numa segunda: "hoje" é a segunda, dia 8, e o pico cai na quarta da semana seguinte.
+const HOJE = 8;
+const PICO = 17;
+const MAX = 100;
+
+const dias = Array.from({ length: 30 }, (_, i) => i + 1);
+const util = (d: number) => (d - 1) % 7 < 5;
+
+// Tarefas que vencem por analista em cada dia útil, antes do ajuste de configuração.
+const ritmo = [9, 12, 8, 11, 10, 13, 9, 11, 10, 12, 11, 16, 100, 18, 10, 9, 11, 10, 12, 8, 11, 9];
+const total = ritmo.reduce((a, b) => a + b, 0);
+// Depois: o mesmo volume diluído no mês, com uma oscilação pequena para não parecer régua.
+const oscila = [1, -1, 0, 2, -2, 1, 0, -1, 2, -1, 0, 1, -2, 0, 1, -1, 2, 0, -1, 1, -2, 0];
+const depois = oscila.map((o) => Math.round(total / ritmo.length) + o);
+
+let u = 0;
+const barras = dias.map((d) => {
+  const i = util(d) ? u++ : -1;
+  return {
+    d,
+    antes: i < 0 ? 0 : ritmo[i],
+    depois: i < 0 ? 0 : depois[i],
+    passado: d <= HOJE,
+    pico: d === PICO,
+  };
+});
+const marcas = [1, HOJE, PICO, 30];
+---
+<figure class="forecast" data-estado="antes">
+  <div class="cab">
+    <p class="titulo">Tarefas que vencem por analista, dia a dia</p>
+    <div class="alternar" role="group" aria-label="Vencimentos do mês">
+      <button type="button" data-para="antes" aria-pressed="true">Antes</button>
+      <button type="button" data-para="depois" aria-pressed="false">Depois do ajuste</button>
+    </div>
+  </div>
+
+  <div class="grafico" aria-hidden="true">
+    <span class="ref"><span>ritmo normal, ~10</span></span>
+    {barras.map((b, i) => (
+      <span
+        class:list={["barra", { passado: b.passado, pico: b.pico }]}
+        style={`grid-column:${b.d};--a:${b.antes / MAX};--d:${b.depois / MAX};--i:${i}`}
+      />
+    ))}
+    <span class="hoje" style={`grid-column:${HOJE}`} />
+    <p class="nota nota-hoje" style={`grid-column:${HOJE + 1} / ${PICO - 1}`}>
+      <strong>Hoje, dia {HOJE}:</strong> 90% no prazo. Parece tranquilo.
+    </p>
+    <p class="nota nota-pico" style={`grid-column:${PICO + 1} / 31`}>
+      <strong>Dia {PICO}:</strong> 100 tarefas por analista, num dia só.
+    </p>
+    <p class="nota nota-depois" style={`grid-column:${HOJE + 2} / 31`}>
+      Mesmo volume, espalhado no mês, sempre dentro do prazo legal.
+    </p>
+  </div>
+
+  <div class="eixo" aria-hidden="true">
+    {marcas.map((d) => <span style={`grid-column:${d}`} class:list={{ destaque: d === HOJE }}>{d}</span>)}
+  </div>
+
+  <figcaption>
+    Dados ilustrativos. O painel real mostrava esse desenho por carteira: os vencimentos de cada dia divididos pelas
+    pessoas do time. Foi olhando para ele que o pessoal achou a configuração que empilhava os prazos.
+  </figcaption>
+</figure>
+
+<script>
+  const reduzir = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.querySelectorAll<HTMLElement>(".forecast").forEach((fig) => {
+    fig.querySelectorAll<HTMLButtonElement>(".alternar button").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        fig.dataset.estado = btn.dataset.para;
+        fig.querySelectorAll(".alternar button").forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+      });
+    });
+    if (reduzir || !("IntersectionObserver" in window)) return;
+    fig.dataset.anim = "off";
+    const obs = new IntersectionObserver((entradas) => {
+      if (!entradas.some((e) => e.isIntersecting)) return;
+      fig.dataset.anim = "on";
+      obs.disconnect();
+    }, { threshold: 0.35 });
+    obs.observe(fig);
+  });
+</script>
+
+<style>
+  .forecast { margin: 0; display: flex; flex-direction: column; gap: 14px; }
+
+  .cab { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 20px; }
+  .titulo { margin: 0; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+
+  .alternar { display: inline-flex; border: 1px solid var(--ink); border-radius: 999px; padding: 2px; }
+  .alternar button {
+    font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+    padding: 6px 14px; border: 0; border-radius: 999px; background: none; color: var(--ink);
+  }
+  .alternar button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+
+  .grafico {
+    position: relative;
+    display: grid; grid-template-columns: repeat(30, minmax(0, 1fr)); grid-template-rows: 1fr;
+    column-gap: 3px; height: clamp(200px, 32vw, 300px);
+    border-bottom: 1px solid var(--ink);
+  }
+  .barra {
+    grid-row: 1; align-self: end;
+    height: calc(var(--a) * 100%);
+    background: var(--faint);
+    transition: height .7s cubic-bezier(.2, .7, .2, 1), background-color .3s;
+    transition-delay: calc(var(--i) * 14ms);
+  }
+  .barra.passado { background: var(--ink); }
+  [data-estado="antes"] .barra.pico { background: var(--accent); }
+  [data-estado="depois"] .barra { height: calc(var(--d) * 100%); }
+  [data-anim="off"] .barra { height: 0; }
+
+  .ref {
+    position: absolute; left: 0; right: 0; bottom: 10%;
+    border-top: 1px dashed var(--muted); pointer-events: none;
+  }
+  .ref span {
+    position: absolute; right: 0; bottom: 4px;
+    font-size: 12px; color: var(--muted); background: var(--bg); padding-left: 6px;
+  }
+
+  .hoje { grid-row: 1; justify-self: end; width: 0; border-right: 1px solid var(--ink); margin-right: -2px; }
+
+  .nota {
+    grid-row: 1; align-self: start; margin: 0;
+    font-size: 13px; line-height: 1.35; color: var(--ink);
+    transition: opacity .4s;
+  }
+  .nota strong { font-weight: 700; }
+  .nota-hoje { margin-top: 12%; padding-left: 10px; }
+  .nota-pico { padding-left: 10px; }
+  .nota-pico strong { color: var(--accent); }
+  .nota-depois { margin-top: 30%; opacity: 0; }
+  [data-estado="depois"] .nota-pico { opacity: 0; }
+  [data-estado="depois"] .nota-depois { opacity: 1; }
+
+  .eixo {
+    display: grid; grid-template-columns: repeat(30, minmax(0, 1fr)); column-gap: 3px;
+    font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; margin-top: -6px;
+  }
+  .eixo span { text-align: center; white-space: nowrap; overflow: visible; }
+  .eixo .destaque { color: var(--ink); font-weight: 700; }
+
+  figcaption { max-width: 64ch; font-size: 13px; line-height: 1.5; color: var(--muted); }
+
+  @media (max-width: 600px) {
+    .grafico { column-gap: 2px; }
+    .nota { font-size: 12px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .barra, .nota { transition: none; }
+  }
+</style>

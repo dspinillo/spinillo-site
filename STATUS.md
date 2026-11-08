@@ -11,12 +11,15 @@ Projeto criado em 07/11/2026. Plano visual F0 com duas rodadas de design; escolh
 |---|---|
 | F0 · plano e direção | ✅ direção E, eixo em três pilares |
 | F1 · no ar no domínio | 🟡 T1.1 ✅ no ar · T1.2 e T1.3 prontas na branch local `f1-home`, aguardando revisão |
-| F2 · cases dos três pilares | 🟡 8 rascunhos prontos, aguardando revisão dele |
+| F2 · cases dos três pilares | 🟡 12 rascunhos (4 novos de empresa em 08/11), aguardando revisão dele |
 | F3 · painel do mercado | ⬜ |
 | F4 · distribuição | ⬜ |
 
 ## Onde paramos (última sessão)
 
+- **Decidido (08/11, noite):** tema claro fixo; portarias públicas; revisaAI pode mostrar o pico de 6/11 no tom de "a dor é grande", nunca de oportunismo; merge na main aprovado. Novas figuras (funil, briefing anotado, antes e depois, árvore) para variar. Trava de publicação no build. Varredura de privacidade feita: limpo. **Próxima ação:** ▶️ frase do topo → merge → T1.4 (ver HANDOFF).
+- **Feito (08/11, noite):** novo formato de case aprovado por ele no piloto do SLA e aplicado nos 12: síntese em três linhas (`sintese`), etiquetas (`stack`), cartões de O que quebrou e Confiabilidade (`quebrou`, `confiabilidade`), texto cortado e uma figura por case. Figuras em `src/components/figuras/`: `ForecastSla` (sob medida, botão antes/depois), e `Fluxo`, `Barras`, `Colunas`, declaradas no campo `figura` do frontmatter. Gráficos de empresa com legenda "dados ilustrativos"; o do revisaAI usa a série real de cadastros por dia (CareerOS, corte 08/11 14h10). Motion só com IntersectionObserver e respeitando prefers-reduced-motion.
+- **Feito (08/11, tarde):** pedido dele, menos cara de side project. Cases novos: `painel-guias` (régua de 72 h, chat), `repositorio-html` (Databricks Apps, FastAPI/Jinja/HTMX, MCP, volume, fugiu do Lakebase), `paralegal` (Pipedrive → Zapier → Pipefy, 20 a 30 mil tarefas/mês, ~1h30/dia, 15 caminhos), `conciliacao-omie` (ERP × lakehouse, 0% → 82%). SLA reescrito com RLS, drill até operador e forecast de vencimentos × pessoas. Régua ganhou o webhook de volta. Briefing ganhou o modelo que soltava chinês. revisaAI sem pagantes, números do CareerOS com corte 08/11 (341 contas, 338 análises, 58 adaptações, 217 cadastros em 06/11). Empresa primeiro em cada pilar. Pendências marcadas com `REVISAR` e `[Para você preencher.]`.
 - **Feito (08/11):** F2 em rascunho na `f1-home`. Coleção `src/content/cases/` (schema em `src/content.config.ts`) e página `src/pages/cases/[id].astro` (rótulo, título, resumo, faixa de números, blocos Problema / Decisão / O que quebrou / Confiabilidade, anterior/próximo). Oito cases: SLA, antifraude, régua, briefing, Triagem, Radar, revisaAI e **Oráculo Flow** (novo, 009 em Construir). Índice da home ganhou frase de contexto sob cada título; linhas com case viram link. "O mercado de vagas de dados" segue sem link (é a F3).
 - **Feito (08/11):** marca `dhiego.spinillo` com ponto laranja (`--accent`), favicon `ds.`, cabeçalho fixo na rolagem, **tema escuro desligado em teste** (bloco mantido em `Base.astro`, media query que nunca casa).
 - **Corrigido (08/11):** 23 anos de carreira (não 20), 13 deles em startups; "Liderei times na Glovo, na Loft e na BHub". CV regenerado (`build.py`, 5 ocorrências) e copiado para `public/cv/`.

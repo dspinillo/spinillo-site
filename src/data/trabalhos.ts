@@ -23,7 +23,11 @@ export const pilares: Pilar[] = [
     trabalhos: [
       {
         titulo: "SLA de 60% para perto de 90%", onde: "BHub", numero: "painel para ~50 gestores", caso: "sla-bhub",
-        linha: "O SLA da operação rodava na casa dos 60%. Passei a mostrar todo dia onde o atraso nascia, e os rituais de métrica viraram a cobrança.",
+        linha: "O SLA da operação rodava na casa dos 60%. Um painel mostrou todo dia onde o atraso nascia e onde ia nascer, e os rituais de métrica viraram a cobrança.",
+      },
+      {
+        titulo: "Guias com folga, não só no prazo", onde: "BHub", numero: "meta de 72 h antes", caso: "painel-guias",
+        linha: "Um painel só do que o cliente recebe, com uma régua mais exigente que o prazo legal e um chat para conversar com o dado.",
       },
       {
         titulo: "Antifraude no canal de corretores", onde: "Loft", numero: "R$ 30 a 50 mil/mês barrados", caso: "antifraude-loft",
@@ -41,8 +45,16 @@ export const pilares: Pilar[] = [
     frase: "Tirar trabalho manual do caminho sem contratar mais gente.",
     trabalhos: [
       {
+        titulo: "A esteira do paralegal", onde: "BHub", numero: "20 a 30 mil tarefas/mês", caso: "paralegal",
+        linha: "Venda no Pipedrive, operação no Pipefy, e os dois não conversavam. Liguei a esteira inteira com o Zapier.",
+      },
+      {
         titulo: "Régua dos certificados", onde: "BHub", numero: "5 h/dia → 30 min", caso: "regua-certificados",
-        linha: "O follow-up de certificados vencendo era feito na mão. Montei a régua do dado ao e-mail, sem contratar ninguém.",
+        linha: "O follow-up de certificados vencendo era feito na mão. Montei a régua do dado ao e-mail e de volta ao card, sem contratar ninguém.",
+      },
+      {
+        titulo: "Quando o ERP e o lakehouse não batem", onde: "BHub", numero: "0% → 82% validado", caso: "conciliacao-omie",
+        linha: "O financeiro exportava relatórios na mão porque nada fechava. O problema não era a conta, era a ingestão.",
       },
     ],
   },
@@ -56,16 +68,20 @@ export const pilares: Pilar[] = [
         linha: "Um painel grande demais virou um resumo diário: o SQL calcula, a IA escreve e cada frase aponta para a origem.",
       },
       {
+        titulo: "Um lugar para os relatórios em HTML", onde: "BHub", numero: "Databricks Apps", caso: "repositorio-html",
+        linha: "As análises viraram arquivos HTML soltos no Slack. Construí um repositório com versão, tags e controle de quem vê.",
+      },
+      {
+        titulo: "revisaAI", onde: "produto", numero: "341 contas em 3 semanas", caso: "revisaai",
+        linha: "Revisor de currículo com IA que se recusa a inventar número. No ar, crescendo pelo LinkedIn.",
+      },
+      {
         titulo: "Triagem com confiança", onde: "experimento", numero: "89% a US$ 0,03/mil", caso: "triagem-com-confianca",
         linha: "Quando dá para deixar a IA classificar reclamação de cliente sozinha? Medi com um gabarito feito à mão.",
       },
       {
         titulo: "Radar de Vagas", onde: "open source", numero: "300+ testes", caso: "radar-de-vagas",
         linha: "Agente que varre portais de vagas, ranqueia pelo seu perfil e aprende com cada descarte. Quem decide é você.",
-      },
-      {
-        titulo: "revisaAI", onde: "produto", numero: "300+ contas", caso: "revisaai",
-        linha: "Revisor de currículo com IA que se recusa a inventar número. No ar, com clientes pagantes.",
       },
       {
         titulo: "Oráculo Flow", onde: "open source", numero: "plugin do Claude Code", caso: "oraculo-flow",

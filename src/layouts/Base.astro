@@ -60,18 +60,8 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "");
     --font: "Archivo", "Helvetica Neue", Arial, sans-serif;
     --wrap: 1120px;
   }
-  /* Tema escuro desligado para teste (era: prefers-color-scheme: dark). */
-  @media (prefers-color-scheme: dark) and (max-width: 0px) {
-    :root {
-      color-scheme: dark;
-      --bg: #151513;
-      --ink: #ecebe6;
-      --muted: #a8a7a0;
-      --faint: #74736d;
-      --line: #34332f;
-      --accent: #ff6a33;
-    }
-  }
+  /* Tema claro fixo (ADR 0002): o site é tipográfico, papel e tinta. */
+  :root { color-scheme: light; }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; scroll-padding-top: 96px; }
   body {

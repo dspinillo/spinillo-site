@@ -1,0 +1,85 @@
+---
+// Etapas de um processo, lado a lado (empilhadas no celular), com uma volta opcional.
+// As linhas se desenham em sequência quando a figura entra na tela (script em cases/[id].astro).
+interface Props {
+  titulo: string;
+  etapas: { nome: string; nota?: string; destaque?: boolean }[];
+  volta?: string;
+  legenda?: string;
+}
+const { titulo, etapas, volta, legenda } = Astro.props;
+---
+<figure class="fluxo fig-anim" style={`--n:${etapas.length}`}>
+  <p class="tit">{titulo}</p>
+  <ol>
+    {etapas.map((e, i) => (
+      <li class:list={{ destaque: e.destaque }} style={`--i:${i}`}>
+        <span class="num">{String(i + 1).padStart(2, "0")}</span>
+        <strong>{e.nome}</strong>
+        {e.nota && <span class="nota">{e.nota}</span>}
+      </li>
+    ))}
+  </ol>
+  {volta && (
+    <p class="volta" style={`--i:${etapas.length}`}><span aria-hidden="true">↩</span> {volta}</p>
+  )}
+  {legenda && <figcaption>{legenda}</figcaption>}
+</figure>
+
+<style>
+  .fluxo { margin: 0; display: flex; flex-direction: column; gap: 18px; }
+  .tit { margin: 0; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+
+  ol {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 14px;
+  }
+  li { position: relative; display: flex; flex-direction: column; gap: 6px; padding-top: 18px; }
+  /* A linha de cada etapa, com a ponta de seta no fim. */
+  li::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--ink);
+    transform-origin: left; transition: transform .5s cubic-bezier(.2, .7, .2, 1);
+    transition-delay: calc(var(--i) * 140ms);
+  }
+  li:not(:last-child)::after {
+    content: ""; position: absolute; top: -4px; right: -2px;
+    border-left: 8px solid var(--ink); border-block: 5px solid transparent;
+    transition: opacity .2s; transition-delay: calc(var(--i) * 140ms + .4s);
+  }
+  li > * { transition: opacity .5s, transform .5s; transition-delay: calc(var(--i) * 140ms + .15s); }
+  .num { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  strong { font-size: clamp(16px, 1.6vw, 19px); font-weight: 700; line-height: 1.2; }
+  .nota { font-size: 14px; line-height: 1.4; color: var(--muted); }
+  .destaque::before { background: var(--accent); height: 4px; top: -1px; }
+  .destaque:not(:last-child)::after { border-left-color: var(--accent); }
+  .destaque .num { color: var(--accent); font-weight: 700; }
+
+  .volta {
+    margin: 0; padding: 12px 16px; border: 1px dashed var(--muted); border-radius: 4px;
+    font-size: 14px; line-height: 1.4; transition: opacity .5s; transition-delay: calc(var(--i) * 140ms + .2s);
+  }
+  .volta span { font-weight: 700; margin-right: 4px; }
+
+  figcaption { max-width: 64ch; font-size: 13px; line-height: 1.5; color: var(--muted); }
+
+  [data-anim="off"] li::before { transform: scaleX(0); }
+  [data-anim="off"] li::after, [data-anim="off"] .volta { opacity: 0; }
+  [data-anim="off"] li > * { opacity: 0; transform: translateY(6px); }
+
+  @media (max-width: 760px) {
+    ol { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    li { padding: 0 0 18px 22px; }
+    li::before { top: 4px; bottom: 0; left: 0; right: auto; width: 2px; height: auto; transform-origin: top; }
+    .destaque::before { width: 4px; left: -1px; top: 4px; height: auto; }
+    li:not(:last-child)::after {
+      top: auto; bottom: 0; right: auto; left: -4px;
+      border-left: 5px solid transparent; border-right: 5px solid transparent;
+      border-top: 8px solid var(--ink); border-bottom: 0;
+    }
+    .destaque:not(:last-child)::after { border-left-color: transparent; border-top-color: var(--accent); }
+    [data-anim="off"] li::before { transform: scaleY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    li::before, li::after, li > *, .volta { transition: none; }
+  }
+</style>

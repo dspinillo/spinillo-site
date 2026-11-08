@@ -1,0 +1,61 @@
+---
+// Comparações horizontais em grupos. Cada grupo tem a sua escala: max, ou o maior valor do grupo.
+interface Item { rotulo: string; valor: number; texto: string; tom?: "ink" | "faint" | "accent" }
+interface Props {
+  titulo: string;
+  grupos: { titulo: string; max?: number; itens: Item[] }[];
+  legenda?: string;
+}
+const { titulo, grupos, legenda } = Astro.props;
+let i = 0;
+---
+<figure class="barras fig-anim">
+  <p class="tit">{titulo}</p>
+  <div class="grupos">
+    {grupos.map((g) => {
+      const max = g.max ?? (Math.max(...g.itens.map((x) => x.valor)) || 1);
+      return (
+        <section>
+          <h3>{g.titulo}</h3>
+          <ul>
+            {g.itens.map((x) => (
+              <li style={`--v:${x.valor / max};--i:${i++}`}>
+                <span class="rot">{x.rotulo}</span>
+                <span class="trilho"><span class:list={["fill", x.tom ?? "faint"]} /></span>
+                <span class:list={["val", { forte: x.tom === "accent" || x.tom === "ink" }]}>{x.texto}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      );
+    })}
+  </div>
+  {legenda && <figcaption>{legenda}</figcaption>}
+</figure>
+
+<style>
+  .barras { margin: 0; display: flex; flex-direction: column; gap: 18px; }
+  .tit { margin: 0; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .grupos { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 28px 40px; }
+  h3 { margin: 0 0 10px; font-size: 15px; font-weight: 700; }
+  ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  li {
+    display: grid; grid-template-columns: minmax(90px, 9em) minmax(0, 1fr) auto;
+    align-items: center; gap: 12px; font-size: 14px;
+  }
+  .rot { color: var(--muted); line-height: 1.25; }
+  .trilho { height: 14px; background: color-mix(in srgb, var(--line) 45%, transparent); }
+  .fill {
+    display: block; height: 100%; width: calc(var(--v) * 100%); min-width: 2px;
+    transition: width .8s cubic-bezier(.2, .7, .2, 1); transition-delay: calc(var(--i) * 90ms);
+  }
+  .fill.ink { background: var(--ink); }
+  .fill.faint { background: var(--faint); }
+  .fill.accent { background: var(--accent); }
+  .val { font-variant-numeric: tabular-nums; min-width: 4.5em; text-align: right; }
+  .val.forte { font-weight: 700; }
+  figcaption { max-width: 64ch; font-size: 13px; line-height: 1.5; color: var(--muted); }
+
+  [data-anim="off"] .fill { width: 0; }
+  @media (prefers-reduced-motion: reduce) { .fill { transition: none; } }
+</style>

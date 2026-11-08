@@ -1,0 +1,77 @@
+---
+// Barras verticais com notas e faixas sobre o gráfico. Colunas são numeradas de 1 a N
+// (de/ate das notas e faixas usam essa numeração, ate inclusivo). topo é a altura da nota em %.
+type Tom = "ink" | "faint" | "accent";
+interface Props {
+  titulo: string;
+  colunas: { rotulo?: string; valor: number; tom?: Tom }[];
+  notas?: { texto: string; de: number; ate: number; topo?: number; tom?: Tom }[];
+  faixas?: { texto: string; de: number; ate: number }[];
+  legenda?: string;
+}
+const { titulo, colunas, notas = [], faixas = [], legenda } = Astro.props;
+const n = colunas.length;
+const max = Math.max(...colunas.map((c) => c.valor)) || 1;
+// Notas aceitam **negrito** simples.
+const html = (t: string) => t.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]!).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+---
+<figure class="colunas fig-anim" style={`--n:${n}`}>
+  <p class="tit">{titulo}</p>
+  {faixas.length > 0 && (
+    <div class="faixas" aria-hidden="true">
+      {faixas.map((f) => <span style={`grid-column:${f.de} / ${f.ate + 1}`}>{f.texto}</span>)}
+    </div>
+  )}
+  <div class="grafico" aria-hidden="true">
+    {colunas.map((c, i) => (
+      <span class:list={["barra", c.tom ?? "faint"]} style={`grid-column:${i + 1};--v:${c.valor / max};--i:${i}`} />
+    ))}
+    {notas.map((t) => (
+      <p class:list={["nota", t.tom ?? "ink"]} style={`grid-column:${t.de} / ${t.ate + 1};margin-top:${t.topo ?? 0}%`} set:html={html(t.texto)} />
+    ))}
+  </div>
+  <div class="eixo" aria-hidden="true">
+    {colunas.map((c, i) => <span style={`grid-column:${i + 1}`}>{c.rotulo}</span>)}
+  </div>
+  {legenda && <figcaption>{legenda}</figcaption>}
+</figure>
+
+<style>
+  .colunas { margin: 0; display: flex; flex-direction: column; gap: 12px; }
+  .tit { margin: 0 0 4px; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+
+  .faixas, .grafico, .eixo {
+    display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); column-gap: 3px;
+  }
+  .faixas span {
+    font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--muted);
+    border-bottom: 1px solid var(--muted); padding-bottom: 4px; margin-inline: 1px;
+  }
+  .grafico { grid-template-rows: 1fr; height: clamp(200px, 30vw, 280px); border-bottom: 1px solid var(--ink); }
+  .barra {
+    grid-row: 1; align-self: end; height: calc(var(--v) * 100%); min-height: 1px;
+    transition: height .7s cubic-bezier(.2, .7, .2, 1); transition-delay: calc(var(--i) * 25ms);
+  }
+  .barra.ink { background: var(--ink); }
+  .barra.faint { background: var(--faint); }
+  .barra.accent { background: var(--accent); }
+
+  .nota { grid-row: 1; align-self: start; margin: 0; padding-inline: 8px; font-size: 13px; line-height: 1.35; transition: opacity .4s .6s; }
+  .nota :global(strong) { font-weight: 700; }
+  .nota.accent :global(strong) { color: var(--accent); }
+
+  .eixo { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; margin-top: -4px; }
+  .eixo span { text-align: center; white-space: nowrap; }
+
+  figcaption { max-width: 64ch; font-size: 13px; line-height: 1.5; color: var(--muted); }
+
+  [data-anim="off"] .barra { height: 0; }
+  [data-anim="off"] .nota { opacity: 0; }
+
+  @media (max-width: 600px) {
+    .faixas, .grafico, .eixo { column-gap: 2px; }
+    .nota, .faixas span { font-size: 11px; }
+    .eixo { font-size: 10px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .barra, .nota { transition: none; } }
+</style>

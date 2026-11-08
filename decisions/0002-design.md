@@ -23,12 +23,12 @@ Direção **E · Índice** (gramática das referências 2, 3 e 7 dele):
 - Positiva: autoridade e cara de consultoria, combina com leitor Head/diretor; sem acento, o dado e a tipografia carregam a página.
 - Custo: mais fria que a D. Calor vem da foto e do texto em primeira pessoa.
 - Sem foto (decisão de 07/11): quem chega veio do LinkedIn e já viu o rosto; a presença vem do texto em primeira pessoa ao lado do título.
-- Pendente: tema escuro derivado (inverter tinta e fundo mantendo os cinzas quentes).
+- Tema escuro descartado (ver abaixo).
 - Mockups: plano F0 (link no auto-memory, fora do repo público).
 
 ## Atualização 08/11/2026
 
 - Marca no topo: `dhiego.spinillo`, com o ponto na cor de acento `--accent` (#e8501c no claro, #ff6a33 no escuro). Exceção pedida por ele à regra "sem cor de acento": só o ponto, nada mais. Favicon `ds.` no mesmo estilo.
 - Cabeçalho fixo na rolagem, com filete quando a página rola.
-- Tema escuro desligado em teste (pedido dele): o site fica sempre claro. Decisão final pendente.
+- **Tema claro fixo (decidido em 08/11/2026).** O escuro foi desligado em teste e não voltou: a direção E é papel e tinta, os gráficos e o laranja foram calibrados no claro, e manter dois temas dobra o trabalho de cada figura nova. Alternativa que perdeu: seguir o sistema (claro e escuro), como estava na T1.2.
 - Página de case: rótulo `(NNN) PILAR · onde · período`, título em caixa alta, resumo, faixa de números com filetes, blocos em duas colunas (título à esquerda), anterior/próximo.

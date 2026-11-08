@@ -1,0 +1,47 @@
+---
+// Árvore de arquivos, com a pergunta que cada um responde. As linhas aparecem em sequência.
+interface Props {
+  titulo: string;
+  arquivos: { nome: string; nota?: string; nivel?: number; destaque?: boolean }[];
+  legenda?: string;
+}
+const { titulo, arquivos, legenda } = Astro.props;
+---
+<figure class="arvore fig-anim">
+  <p class="tit">{titulo}</p>
+  <ul>
+    {arquivos.map((a, i) => (
+      <li class:list={{ destaque: a.destaque }} style={`--n:${a.nivel ?? 0};--i:${i}`}>
+        <code>{(a.nivel ?? 0) > 0 && <span class="ramo" aria-hidden="true">└─ </span>}{a.nome}</code>
+        {a.nota && <span class="nota">{a.nota}</span>}
+      </li>
+    ))}
+  </ul>
+  {legenda && <figcaption>{legenda}</figcaption>}
+</figure>
+
+<style>
+  .arvore { margin: 0; display: flex; flex-direction: column; gap: 18px; }
+  .tit { margin: 0; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  ul { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink); }
+  li {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 24px; align-items: baseline;
+    padding: 12px 0; border-bottom: 1px solid var(--line);
+    transition: opacity .4s, transform .4s; transition-delay: calc(var(--i) * 80ms);
+  }
+  code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 14px; padding-left: calc(var(--n) * 22px); }
+  .ramo { color: var(--faint); }
+  .nota { font-size: 15px; line-height: 1.4; color: var(--muted); }
+  .destaque code { font-weight: 700; }
+  .destaque code::after { content: ""; display: inline-block; width: 7px; height: 7px; margin-left: 8px; border-radius: 50%; background: var(--accent); transform: translateY(-2px); }
+  .destaque .nota { color: var(--ink); }
+  figcaption { max-width: 64ch; font-size: 13px; line-height: 1.5; color: var(--muted); }
+
+  [data-anim="off"] li { opacity: 0; transform: translateX(-8px); }
+
+  @media (max-width: 700px) {
+    li { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+    .nota { padding-left: calc(var(--n) * 22px); font-size: 14px; }
+  }
+  @media (prefers-reduced-motion: reduce) { li { transition: none; } }
+</style>

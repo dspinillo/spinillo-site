@@ -2,6 +2,20 @@
 import { getCollection, render } from "astro:content";
 import Base from "../../layouts/Base.astro";
 import { indice } from "../../data/trabalhos";
+import ForecastSla from "../../components/figuras/ForecastSla.astro";
+import Fluxo from "../../components/figuras/Fluxo.astro";
+import Barras from "../../components/figuras/Barras.astro";
+import Colunas from "../../components/figuras/Colunas.astro";
+import Funil from "../../components/figuras/Funil.astro";
+import Anotado from "../../components/figuras/Anotado.astro";
+import AntesDepois from "../../components/figuras/AntesDepois.astro";
+import Arvore from "../../components/figuras/Arvore.astro";
+
+// Figura feita sob medida, pelo id do case. Os outros declaram a figura no frontmatter (campo figura).
+const figuras: Record<string, any> = { "sla-bhub": ForecastSla };
+const porTipo: Record<string, any> = {
+  fluxo: Fluxo, barras: Barras, colunas: Colunas, funil: Funil, anotado: Anotado, antesdepois: AntesDepois, arvore: Arvore,
+};
 
 export async function getStaticPaths() {
   const cases = await getCollection("cases");
@@ -22,7 +36,14 @@ const comCaso = indice.filter((t) => t.caso && publicados.has(t.caso));
 const aqui = comCaso.findIndex((t) => t.caso === caso.id);
 const anterior = comCaso[aqui - 1];
 const proximo = comCaso[aqui + 1];
-const { titulo, resumo, periodo, numeros, links } = caso.data;
+const { titulo, resumo, periodo, numeros, links, sintese, stack, quebrou, confiabilidade, figura } = caso.data;
+const Figura = figuras[caso.id] ?? (figura && porTipo[figura.tipo]);
+const cartoes = [
+  quebrou && { rotulo: "O que quebrou", ...quebrou },
+  confiabilidade && { rotulo: "Confiabilidade", ...confiabilidade },
+].filter((c) => c && !c.texto.startsWith("[Para você preencher")) as { rotulo: string; titulo?: string; texto: string }[];
+// Número que conta até o valor: só quando o valor tem um número só ("60%", "170 mil+").
+const contavel = (v: string) => (v.match(/\d+(?:[.,]\d+)?/g) ?? []).length === 1;
 ---
 <Base title={`${titulo} · Dhiego Spinillo`} description={resumo}>
   <main>
@@ -36,21 +57,49 @@ const { titulo, resumo, periodo, numeros, links } = caso.data;
         <span>{periodo}</span>
       </p>
       <h1>{titulo}</h1>
-      <p class="resumo">{resumo}</p>
+      {sintese ? (
+        <dl class="sintese">
+          <div><dt>Problema</dt><dd>{sintese.problema}</dd></div>
+          <div><dt>O que fiz</dt><dd>{sintese.feito}</dd></div>
+          <div><dt>Resultado</dt><dd>{sintese.resultado}</dd></div>
+        </dl>
+      ) : (
+        <p class="resumo">{resumo}</p>
+      )}
     </header>
 
     <dl class="numeros">
       {numeros.map((x) => (
         <div>
           <dt>{x.rotulo}</dt>
-          <dd>{x.valor}</dd>
+          <dd data-contar={contavel(x.valor) ? "" : undefined}>{x.valor}</dd>
         </div>
       ))}
     </dl>
 
+    {Figura && <Figura {...figura} />}
+
+    {stack.length > 0 && (
+      <ul class="stack" aria-label="Ferramentas">
+        {stack.map((f) => <li>{f}</li>)}
+      </ul>
+    )}
+
     <article class="corpo">
       <Content />
     </article>
+
+    {cartoes.length > 0 && (
+      <div class="cartoes">
+        {cartoes.map((c) => (
+          <section>
+            <h2>{c.rotulo}</h2>
+            {c.titulo && <p class="cartao-titulo">{c.titulo}</p>}
+            <p>{c.texto}</p>
+          </section>
+        ))}
+      </div>
+    )}
 
     {links.length > 0 && (
       <ul class="links">
@@ -77,6 +126,53 @@ const { titulo, resumo, periodo, numeros, links } = caso.data;
   </main>
 </Base>
 
+<script>
+  // Figuras com .fig-anim começam recolhidas e se desenham quando entram na tela.
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches && "IntersectionObserver" in window) {
+    const obs = new IntersectionObserver((entradas) => {
+      entradas.forEach((e) => {
+        if (!e.isIntersecting) return;
+        (e.target as HTMLElement).dataset.anim = "on";
+        obs.unobserve(e.target);
+      });
+    }, { threshold: 0.3 });
+    document.querySelectorAll<HTMLElement>(".fig-anim").forEach((f) => {
+      f.dataset.anim = "off";
+      obs.observe(f);
+    });
+  }
+</script>
+
+<script>
+  // Os números da faixa contam do zero até o valor quando entram na tela.
+  const dds = document.querySelectorAll<HTMLElement>(".numeros dd[data-contar]");
+  if (dds.length && !matchMedia("(prefers-reduced-motion: reduce)").matches && "IntersectionObserver" in window) {
+    const formata = (n: number, casas: number) => n.toLocaleString("pt-BR", { minimumFractionDigits: casas, maximumFractionDigits: casas });
+    const obs = new IntersectionObserver((entradas) => {
+      entradas.forEach((e) => {
+        if (!e.isIntersecting) return;
+        obs.unobserve(e.target);
+        const el = e.target as HTMLElement;
+        const texto = el.textContent ?? "";
+        const m = texto.match(/\d+(?:[.,]\d+)?/)!;
+        const casas = m[0].includes(",") ? m[0].split(",")[1].length : 0;
+        const alvo = parseFloat(m[0].replace(".", "").replace(",", "."));
+        const [antes, depois] = [texto.slice(0, m.index), texto.slice(m.index! + m[0].length)];
+        const inicio = performance.now();
+        const passo = (t: number) => {
+          const k = Math.min(1, (t - inicio) / 900);
+          const v = alvo * (1 - Math.pow(1 - k, 3));
+          el.textContent = antes + formata(k < 1 ? v : alvo, casas) + depois;
+          if (k < 1) requestAnimationFrame(passo);
+          else el.textContent = texto;
+        };
+        requestAnimationFrame(passo);
+      });
+    }, { threshold: 0.6 });
+    dds.forEach((d) => obs.observe(d));
+  }
+</script>
+
 <style>
   main { display: flex; flex-direction: column; gap: 48px; padding-block: 24px 88px; }
 
@@ -98,6 +194,37 @@ const { titulo, resumo, periodo, numeros, links } = caso.data;
     text-transform: uppercase; text-wrap: balance;
   }
   .resumo { margin: 0; max-width: 60ch; font-size: clamp(18px, 2vw, 21px); line-height: 1.45; }
+
+  .sintese {
+    display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px;
+    margin: 4px 0 0; max-width: 980px;
+  }
+  @media (min-width: 861px) {
+    .sintese { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px 32px; }
+  }
+  .sintese dt { font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .sintese dd { margin: 8px 0 0; font-size: clamp(17px, 1.8vw, 20px); line-height: 1.4; text-wrap: pretty; }
+  .sintese div:last-child dd { font-weight: 700; }
+
+  .stack { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: -24px 0 0; padding: 0; }
+  .stack li {
+    font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+    padding: 5px 10px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted);
+  }
+
+  .corpo :global(blockquote) {
+    grid-column: 2; margin: 40px 0 0; padding: 0 0 0 20px; border-left: 3px solid var(--accent);
+  }
+  .corpo :global(blockquote p) {
+    margin: 0; font-size: clamp(22px, 2.6vw, 30px); font-weight: 700; font-stretch: 110%;
+    line-height: 1.15; letter-spacing: -.01em; text-wrap: balance;
+  }
+
+  .cartoes { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .cartoes section { padding: 20px 22px 22px; border: 1px solid var(--line); border-radius: 4px; }
+  .cartoes h2 { margin: 0; font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .cartoes .cartao-titulo { margin: 12px 0 0; font-weight: 700; }
+  .cartoes p { margin: 8px 0 0; max-width: 60ch; }
 
   .numeros {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -153,10 +280,42 @@ const { titulo, resumo, periodo, numeros, links } = caso.data;
 
   @media (max-width: 860px) {
     h1 { font-stretch: 100%; }
+    .corpo :global(blockquote) { grid-column: 1; }
     .corpo { grid-template-columns: minmax(0, 1fr); }
     .corpo :global(h2), .corpo :global(h2 ~ *:not(h2)) { grid-column: 1; }
     .corpo :global(h2 + *) { border-top: 0; padding-top: 0; margin-top: 12px !important; }
-    .numeros { grid-template-columns: 1fr 1fr; }
+    .sintese {
+    display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px;
+    margin: 4px 0 0; max-width: 980px;
+  }
+  @media (min-width: 861px) {
+    .sintese { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px 32px; }
+  }
+  .sintese dt { font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .sintese dd { margin: 8px 0 0; font-size: clamp(17px, 1.8vw, 20px); line-height: 1.4; text-wrap: pretty; }
+  .sintese div:last-child dd { font-weight: 700; }
+
+  .stack { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: -24px 0 0; padding: 0; }
+  .stack li {
+    font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+    padding: 5px 10px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted);
+  }
+
+  .corpo :global(blockquote) {
+    grid-column: 2; margin: 40px 0 0; padding: 0 0 0 20px; border-left: 3px solid var(--accent);
+  }
+  .corpo :global(blockquote p) {
+    margin: 0; font-size: clamp(22px, 2.6vw, 30px); font-weight: 700; font-stretch: 110%;
+    line-height: 1.15; letter-spacing: -.01em; text-wrap: balance;
+  }
+
+  .cartoes { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .cartoes section { padding: 20px 22px 22px; border: 1px solid var(--line); border-radius: 4px; }
+  .cartoes h2 { margin: 0; font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .cartoes .cartao-titulo { margin: 12px 0 0; font-weight: 700; }
+  .cartoes p { margin: 8px 0 0; max-width: 60ch; }
+
+  .numeros { grid-template-columns: 1fr 1fr; }
     .numeros div { padding: 14px 12px 16px 0; border-right: 0; border-bottom: 1px solid var(--line); }
     .numeros div + div { padding-left: 0; }
     .numeros div:nth-child(2n) { padding-left: 12px; border-left: 1px solid var(--line); }

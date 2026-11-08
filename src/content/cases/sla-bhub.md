@@ -1,7 +1,11 @@
 ---
 titulo: SLA de 60% para perto de 90%
-resumo: "A área de dados não executa a operação. Mas dá para mostrar, todo dia e para cada gestor, onde o atraso nasce. Foi isso que mudou a conversa sobre SLA na BHub."
+resumo: "A área de dados não executa a operação. Mas dá para mostrar, todo dia e para cada gestor, onde o atraso nasce e onde ele vai nascer na semana que vem. Foi isso que mudou a conversa sobre SLA na BHub."
 periodo: Head de Dados
+sintese:
+  problema: "O SLA rodava na casa dos 60%, e ninguém conseguia dizer onde o atraso nascia."
+  feito: "Um painel diário com o atraso de hoje, aberto até o operador, e o da semana que vem, num forecast."
+  resultado: "Com os rituais da operação em cima dele, o SLA chegou perto de 90%."
 numeros:
   - valor: "60%"
     rotulo: SLA quando cheguei
@@ -11,28 +15,33 @@ numeros:
     rotulo: gestores usando o painel
   - valor: "170 mil+"
     rotulo: tarefas acompanhadas
+stack: [Databricks Apps, Lakehouse, SQL, Claude Code, GitHub]
+quebrou:
+  titulo: O responsável errado.
+  texto: "Para cobrar uma tarefa, é preciso saber de quem ela é. A base de responsáveis não batia com a alocação dos times em meados de 80% da carteira. Um acompanhamento diário da divergência levou esse número para meados de 40% em três meses."
+confiabilidade:
+  texto: "[Para você preencher.] Como você garantiu que o número do painel era o mesmo que a operação via? Por exemplo: conferência por amostra, regra de cálculo acordada com os gestores, o que fazia uma tarefa entrar ou sair da conta."
+revisar:
+  - "confirmar se a correção dos responsáveis andou junto com o trabalho do SLA. Se foi outra frente, o cartão sai. Nas notas consta chat de IA também neste painel: entra aqui ou fica só no de guias?"
 ---
 
 ## Problema
 
-O SLA da operação rodava na casa dos 60%. Saber que está ruim é fácil. Difícil é dizer onde.
+Com cerca de 6 mil clientes e mais de 170 mil tarefas, a média esconde tudo. Um departamento muito atrasado e os outros em dia dão o mesmo número que todos um pouco atrasados.
 
-Com uma carteira de cerca de 6 mil clientes e mais de 170 mil tarefas, a média esconde tudo. Um departamento atrasando muito e outros em dia dão o mesmo número que todos atrasando um pouco, e a solução de cada caso é completamente diferente.
+E o número do dia engana. Estar com 90% no prazo no dia 8 parece ótimo, mas talvez só uma fração do mês tenha vencido até ali.
 
-## Decisão
+## O que fiz
 
-Passei a mostrar todo dia onde o atraso nascia, num painel aberto para os gestores olharem a própria fila. Ele chegou a ser usado por cerca de 50 gestores, e a métrica entrou nos rituais diários de cada time. Com o atraso à vista de todo mundo, os rituais viraram a cobrança.
+Um painel no Databricks Apps, em cima do lakehouse, que responde a duas perguntas:
 
-<!-- REVISAR: detalhar como o painel abria o atraso (departamento, responsável, cliente?) com as palavras dele. -->
+- **Onde está o atraso hoje.** Por departamento (contábil, fiscal e DP): no prazo, fora do prazo ou em aberto. Cada pessoa vê o que é seu. O gerente desce até o operador; o coordenador vê a própria equipe.
+- **Onde ele vai estar.** Tudo o que vai vencer, dia a dia, dividido pelas pessoas de cada carteira. Um pico de 100 tarefas por analista se resolve com antecedência, nunca no dia.
 
-**Resultado.** O SLA subiu mês a mês, da casa dos 60% até perto de 90%. Quem fez o SLA subir foi a operação. O papel do time de dados foi mostrar, todo dia, onde o atraso estava nascendo.
+Cerca de 50 gestores usavam o painel, e ele entrou nos rituais diários. Quem fez o SLA subir foi a operação. O papel dos dados foi mostrar onde.
 
-## O que quebrou
+> Olhando para frente, o pico deixou de ser surpresa.
 
-**O responsável errado.** Para cobrar uma tarefa atrasada, é preciso saber de quem ela é. A base de responsáveis por cliente não batia com o mapa de alocação dos times: em meados de 80% da carteira havia alguma inconsistência. Montei um acompanhamento diário dessa divergência, e as áreas foram corrigindo. Em três meses, caiu para meados de 40%, pela metade.
+## O que o forecast revelou
 
-<!-- REVISAR: confirmar se a correção dos responsáveis andou junto com o trabalho do SLA. Se foi outra frente, este bloco sai. -->
-
-## Confiabilidade
-
-**[Para você preencher.]** Como você garantiu que o número do painel era o mesmo que a operação via? Exemplos do que vale contar: conferência por amostra com a operação, regra de cálculo do SLA acordada com os gestores, o que fazia uma tarefa entrar ou sair da conta.
+Muita tarefa vencia no mesmo dia sem motivo legal. Era configuração da ferramenta de tarefas. Os prazos foram diluídos ao longo do mês, sempre dentro do vencimento legal, e o trabalho parou de chegar em ondas.
