@@ -27,8 +27,8 @@ Build:    npm run build (Astro 7, exige Node >= 22.23); deploy por push na main
 ## Próxima ação (checklist)
 
 1. [x] Frase do topo escolhida em 08/11: a recomendada (dados e operação + mão no código).
-2. [ ] Merge da `f1-home` na `main` (ele aprovou em 08/11): o deploy vai para dspinillo.github.io/spinillo-site. Conferir no celular.
-3. [ ] T1.4 domínio, nesta ordem:
+2. [x] Merge da `f1-home` na `main` (feito 08/11) (ele aprovou em 08/11): o deploy vai para dspinillo.github.io/spinillo-site. Conferir no celular.
+3. [ ] T1.4 domínio. Feito em 08/11: DNS na UOL (4 A + www CNAME), config e `public/CNAME` publicados, custom domain setado no Pages; site responde pelos IPs do GitHub e github.io redireciona. FALTA: esperar propagação e ligar Enforce HTTPS (`gh api -X PUT repos/dspinillo/spinillo-site/pages -F https_enforced=true`; dá 404 enquanto o certificado não existe). Passos originais:
    - GitHub, Settings → Pages → Custom domain: `spinillo.com.br` (cria o arquivo CNAME; manter também `public/CNAME` no repo).
    - `astro.config.mjs`: `site: "https://spinillo.com.br"`, `base: "/"`. Conferir links com `import.meta.env.BASE_URL`.
    - UOL (painel de DNS): no raiz, 4 registros A para 185.199.108.153, 185.199.109.153, 185.199.110.153 e 185.199.111.153; `www` CNAME para `dspinillo.github.io`. NUNCA trocar NS nem tocar no MX. Ele loga no painel; eu guio pelo navegador.
