@@ -43,7 +43,7 @@ const filtros = [
 
     <dl class="numeros">
       <div><dt>vagas</dt><dd data-n="vagas">{painel.total}</dd></div>
-      <div><dt>empresas</dt><dd>{painel.empresas}</dd></div>
+      <div><dt>empresas</dt><dd data-n="empresas">{painel.empresas}</dd></div>
       <div><dt>pedem inglês fluente</dt><dd data-n="ingles">–</dd></div>
       <div><dt>mostram o salário</dt><dd data-n="salario">–</dd></div>
     </dl>
@@ -57,22 +57,25 @@ const filtros = [
     <div class="trio">
       <section class="bloco">
         <h2>Modelo de trabalho</h2>
+        <p class="nota" data-dica="modelo" hidden>Todas as opções, com a escolhida em laranja.</p>
         <ul class="barras curtas" data-barras="modelo"></ul>
       </section>
       <section class="bloco">
         <h2>Área</h2>
+        <p class="nota" data-dica="familia" hidden>Todas as opções, com a escolhida em laranja.</p>
         <ul class="barras curtas" data-barras="familia"></ul>
       </section>
       <section class="bloco">
         <h2>Nível</h2>
+        <p class="nota" data-dica="nivel" hidden>Todas as opções, com a escolhida em laranja.</p>
         <ul class="barras curtas" data-barras="nivel"></ul>
       </section>
     </div>
 
     <section class="bloco">
       <h2>Quem mais abriu vagas</h2>
-      <p class="nota">Empresas com mais vagas na coleta, sem recrutadoras e anúncios confidenciais.</p>
-      <ol class="empresas">
+      <p class="nota">Empresas com mais vagas <span data-recorte>na coleta</span>, sem recrutadoras e anúncios confidenciais.</p>
+      <ol class="empresas" data-empresas>
         {painel.topEmpresas.map(([nome, n]) => <li><span>{nome}</span><span class="qtd">{n}</span></li>)}
       </ol>
     </section>
@@ -130,7 +133,7 @@ const filtros = [
   </main>
 </Base>
 
-<script is:inline type="application/json" id="dados-painel" set:html={JSON.stringify(painel.linhas)}></script>
+<script is:inline type="application/json" id="dados-painel" set:html={JSON.stringify({ nomes: painel.nomes, linhas: painel.linhas })}></script>
 
 <script>
   // Mesma regra das páginas de case: a figura se desenha quando entra na tela.
@@ -150,8 +153,8 @@ const filtros = [
 </script>
 
 <script>
-  type Linha = { familia: string; nivel: string; modelo: string; fonte: string; ferramentas: string[]; ingles: boolean; salario: boolean };
-  const linhas: Linha[] = JSON.parse(document.getElementById("dados-painel")!.textContent!);
+  type Linha = { e: number | null; familia: string; nivel: string; modelo: string; fonte: string; ferramentas: string[]; ingles: boolean; salario: boolean };
+  const { nomes, linhas }: { nomes: string[]; linhas: Linha[] } = JSON.parse(document.getElementById("dados-painel")!.textContent!);
   const selects = [...document.querySelectorAll<HTMLSelectElement>("select[data-filtro]")];
   const limpar = document.querySelector<HTMLButtonElement>(".limpar")!;
   const pct = (n: number, t: number) => (t ? `${Math.round((100 * n) / t)}%` : "–");
@@ -162,13 +165,14 @@ const filtros = [
     return [...m].sort((a, b) => b[1] - a[1]);
   }
 
-  function barras(alvo: string, itens: [string, number][], total: number, limite = 99) {
+  function barras(alvo: string, itens: [string, number][], total: number, limite = 99, marcado = "") {
     const ul = document.querySelector<HTMLUListElement>(`[data-barras="${alvo}"]`)!;
     const max = itens[0]?.[1] || 1;
     ul.innerHTML = "";
     for (const [nome, n] of itens.slice(0, limite)) {
       const li = document.createElement("li");
       li.style.setProperty("--v", String(n / max));
+      if (nome === marcado) li.className = "marcado";
       li.innerHTML = `<span class="rot"></span><span class="trilho"><span class="fill"></span></span><span class="val">${n} <small>${pct(n, total)}</small></span>`;
       li.querySelector(".rot")!.textContent = nome;
       ul.append(li);
@@ -183,10 +187,29 @@ const filtros = [
     document.querySelector('[data-n="vagas"]')!.textContent = String(t);
     document.querySelector('[data-n="ingles"]')!.textContent = pct(lista.filter((l) => l.ingles).length, t);
     document.querySelector('[data-n="salario"]')!.textContent = pct(lista.filter((l) => l.salario).length, t);
+    const porEmpresa = new Map<number, number>();
+    for (const l of lista) if (l.e !== null) porEmpresa.set(l.e, (porEmpresa.get(l.e) ?? 0) + 1);
+    document.querySelector('[data-n="empresas"]')!.textContent = String(porEmpresa.size);
+    const top = [...porEmpresa].sort((a, b) => b[1] - a[1] || nomes[a[0]].localeCompare(nomes[b[0]])).slice(0, 12);
+    const ol = document.querySelector<HTMLOListElement>("[data-empresas]")!;
+    ol.innerHTML = "";
+    for (const [i, n] of top) {
+      const li = document.createElement("li");
+      li.innerHTML = `<span></span><span class="qtd">${n}</span>`;
+      li.firstElementChild!.textContent = nomes[i];
+      ol.append(li);
+    }
+    if (!top.length) ol.innerHTML = `<li class="vazio">Nenhuma empresa com esses filtros.</li>`;
+    document.querySelector("[data-recorte]")!.textContent = ativos.length ? "com os filtros escolhidos" : "na coleta";
     barras("ferramentas", contar(lista, "ferramentas"), t, 15);
-    barras("modelo", contar(lista, "modelo"), t);
-    barras("familia", contar(lista, "familia"), t);
-    barras("nivel", contar(lista, "nivel"), t);
+    // O gráfico da dimensão filtrada ignora o próprio filtro e destaca a opção escolhida;
+    // senão viraria uma barra única de 100%.
+    for (const k of ["modelo", "familia", "nivel"] as const) {
+      const sel = selects.find((x) => x.dataset.filtro === k)!.value;
+      const base = sel ? linhas.filter((l) => ativos.every((x) => x.dataset.filtro === k || l[x.dataset.filtro as keyof Linha] === x.value)) : lista;
+      barras(k, contar(base, k), base.length, 99, sel);
+      document.querySelector<HTMLElement>(`[data-dica="${k}"]`)!.hidden = !sel;
+    }
     limpar.hidden = !ativos.length;
   }
 
@@ -248,13 +271,16 @@ const filtros = [
   .barras :global(.trilho) { height: 12px; background: var(--line); }
   .barras.curtas :global(.trilho) { height: 8px; }
   .barras :global(.fill) { display: block; height: 100%; width: calc(var(--v) * 100%); background: var(--ink); transition: width .4s ease; }
+  .barras :global(.marcado .fill) { background: var(--accent); }
+  .barras :global(.marcado .rot) { font-weight: 700; }
   .barras :global(.val) { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
   .barras :global(.val small) { font-weight: 400; color: var(--muted); font-size: 13px; margin-left: 4px; }
   .barras :global(.vazio) { display: block; color: var(--muted); }
 
   .empresas { list-style: none; margin: 16px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 40px; border-top: 1px solid var(--ink); }
-  .empresas li { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 17px; font-weight: 700; font-stretch: 105%; }
-  .empresas .qtd { font-weight: 400; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .empresas :global(li) { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 17px; font-weight: 700; font-stretch: 105%; }
+  .empresas :global(.vazio) { font-weight: 400; color: var(--muted); }
+  .empresas :global(.qtd) { font-weight: 400; color: var(--muted); font-variant-numeric: tabular-nums; }
 
   .como { border-top: 1px solid var(--ink); padding-top: 24px; display: flex; flex-direction: column; gap: 32px; }
   .como .grande { font-size: clamp(26px, 3.4vw, 40px); letter-spacing: -.01em; text-transform: uppercase; color: var(--ink); font-weight: 800; font-stretch: 115%; }

@@ -1,3 +1,5 @@
+import painel from "./painel.json";
+
 export interface Trabalho {
   titulo: string;
   onde: string;
@@ -36,7 +38,7 @@ export const pilares: Pilar[] = [
         linha: "Visita fantasma e proposta fria rendiam incentivo indevido a corretores. Regras em cima do funil passaram a pegar o padrão.",
       },
       {
-        titulo: "O mercado de liderança em operação e dados", onde: "painel", numero: "608 vagas, 402 empresas", href: "/painel/",
+        titulo: "O mercado de liderança em operação e dados", onde: "painel", numero: `${painel.total} vagas, ${painel.empresas} empresas`, href: "/painel/",
         linha: "As vagas que o meu coletor reúne em 10 fontes, numa foto da semana: o que pedem, onde é o trabalho e quem contrata.",
       },
     ],

@@ -1,6 +1,6 @@
 // Gera src/data/painel.json a partir da coleta pessoal (fora deste repo).
-// Publica só campos derivados: família, nível, modelo, fonte, ferramentas,
-// inglês e salário por vaga, mais a contagem por empresa. Título, link e texto
+// Publica só campos derivados: empresa, família, nível, modelo, fonte,
+// ferramentas, inglês e salário por vaga. Título, link e texto
 // do anúncio nunca saem daqui.
 //
 // Uso: node scripts/exportar-painel.mjs [caminho/do/raw.json]
@@ -53,9 +53,14 @@ function modelo(v) {
 }
 const achar = (lista, texto, padrao) => (lista.find(([, re]) => re.test(texto)) ?? [padrao])[0];
 
+// Empresas viram índice numa lista à parte; recrutadoras e anônimas ficam sem empresa (null).
+const nomes = [...new Set(vagas.map((v) => (v.company ?? "").trim()).filter((e) => e && !naoEmpresa.test(sem(e))))].sort((a, b) => a.localeCompare(b));
+const indice = new Map(nomes.map((n, i) => [n, i]));
+
 const linhas = vagas.map((v) => {
   const titulo = sem(v.title), texto = sem(v.description);
   return {
+    e: indice.get((v.company ?? "").trim()) ?? null,
     familia: achar(familias, titulo, "Outras"),
     nivel: achar(niveis, titulo, "Outros"),
     modelo: modelo(v),
@@ -79,6 +84,7 @@ const saida = {
   total: vagas.length,
   empresas: Object.keys(empresas).length,
   topEmpresas: Object.entries(empresas).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, 12),
+  nomes,
   linhas,
 };
 writeFileSync(new URL("../src/data/painel.json", import.meta.url), JSON.stringify(saida));
