@@ -37,8 +37,9 @@ const casos = new Set((await getCollection("cases")).map((c) => c.id));
                 <span class="num">{t.numero}</span>
               </>
             );
-            return t.caso && casos.has(t.caso)
-              ? <li><a href={`${base}/cases/${t.caso}/`}>{linha}<span class="seta" aria-hidden="true">→</span></a></li>
+            const href = t.href ?? (t.caso && casos.has(t.caso) ? `/cases/${t.caso}/` : undefined);
+            return href
+              ? <li><a href={`${base}${href}`}>{linha}<span class="seta" aria-hidden="true">→</span></a></li>
               : <li><div>{linha}</div></li>;
           })}
         </ol>

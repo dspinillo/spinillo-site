@@ -6,6 +6,8 @@ export interface Trabalho {
   linha: string;
   /** Id do case em src/content/cases/. Sem ele, a linha do índice não vira link. */
   caso?: string;
+  /** Link fora de /cases, como o painel. */
+  href?: string;
 }
 
 export interface Pilar {
@@ -34,8 +36,8 @@ export const pilares: Pilar[] = [
         linha: "Visita fantasma e proposta fria rendiam incentivo indevido a corretores. Regras em cima do funil passaram a pegar o padrão.",
       },
       {
-        titulo: "O mercado de vagas de dados", onde: "painel", numero: "em breve",
-        linha: "Em construção: vagas de dados coletadas em vários portais, numa foto da semana de quem contrata, com que ferramentas e em que modelo.",
+        titulo: "O mercado de liderança em operação e dados", onde: "painel", numero: "608 vagas, 402 empresas", href: "/painel/",
+        linha: "As vagas que o meu coletor reúne em 10 fontes, numa foto da semana: o que pedem, onde é o trabalho e quem contrata.",
       },
     ],
   },

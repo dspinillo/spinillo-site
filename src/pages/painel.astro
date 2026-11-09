@@ -1,0 +1,209 @@
+---
+import Base from "../layouts/Base.astro";
+import painel from "../data/painel.json";
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const data = (iso: string) => iso.split("-").reverse().slice(0, 2).join("/");
+const opcoes = (k: "familia" | "nivel" | "modelo") => {
+  const conta: Record<string, number> = {};
+  for (const l of painel.linhas) conta[l[k]] = (conta[l[k]] ?? 0) + 1;
+  return Object.entries(conta).sort((a, b) => b[1] - a[1]).map(([n]) => n);
+};
+const fontes = new Set(painel.linhas.map((l) => l.fonte)).size;
+const filtros = [
+  { k: "familia", rotulo: "Área", itens: opcoes("familia") },
+  { k: "nivel", rotulo: "Nível", itens: opcoes("nivel") },
+  { k: "modelo", rotulo: "Modelo", itens: opcoes("modelo") },
+];
+---
+<Base title="O mercado de liderança em operação e dados · Dhiego Spinillo" description="Foto da semana das vagas de liderança em operação, dados, processos e receita no Brasil: ferramentas pedidas, modelo de trabalho e quem contrata.">
+  <main>
+    <a class="voltar" href={`${base}/#enxergar`}>← Enxergar</a>
+
+    <header class="abertura">
+      <p class="rotulo">Painel · coleta de {data(painel.coleta)}</p>
+      <h1>O mercado de liderança em operação e dados</h1>
+      <p class="resumo">Uma foto das vagas abertas para gerente, head e coordenação em operação, dados, processos e receita: o que pedem, onde é o trabalho e quem está contratando. Filtre para ver a sua fatia.</p>
+    </header>
+
+    <div class="filtros" role="group" aria-label="Filtros">
+      {filtros.map((f) => (
+        <label>
+          <span>{f.rotulo}</span>
+          <select data-filtro={f.k}>
+            <option value="">Todas</option>
+            {f.itens.map((i) => <option value={i}>{i}</option>)}
+          </select>
+        </label>
+      ))}
+      <button type="button" class="limpar" hidden>Limpar filtros</button>
+    </div>
+
+    <dl class="numeros">
+      <div><dt>vagas</dt><dd data-n="vagas">{painel.total}</dd></div>
+      <div><dt>empresas</dt><dd>{painel.empresas}</dd></div>
+      <div><dt>pedem inglês fluente</dt><dd data-n="ingles">–</dd></div>
+      <div><dt>mostram o salário</dt><dd data-n="salario">–</dd></div>
+    </dl>
+
+    <section class="bloco">
+      <h2>Ferramentas citadas no anúncio</h2>
+      <p class="nota">Em quantas vagas cada ferramenta aparece no texto. Uma vaga pode citar várias.</p>
+      <ul class="barras" data-barras="ferramentas"></ul>
+    </section>
+
+    <div class="trio">
+      <section class="bloco">
+        <h2>Modelo de trabalho</h2>
+        <ul class="barras curtas" data-barras="modelo"></ul>
+      </section>
+      <section class="bloco">
+        <h2>Área</h2>
+        <ul class="barras curtas" data-barras="familia"></ul>
+      </section>
+      <section class="bloco">
+        <h2>Nível</h2>
+        <ul class="barras curtas" data-barras="nivel"></ul>
+      </section>
+    </div>
+
+    <section class="bloco">
+      <h2>Quem mais abriu vagas</h2>
+      <p class="nota">Empresas com mais vagas na coleta, sem recrutadoras e anúncios confidenciais.</p>
+      <ol class="empresas">
+        {painel.topEmpresas.map(([nome, n]) => <li><span>{nome}</span><span class="qtd">{n}</span></li>)}
+      </ol>
+    </section>
+
+    <section class="metodo">
+      <h2>Como foi feito</h2>
+      <p>As vagas vêm do coletor que uso na minha própria busca, rodando em {fontes} fontes: LinkedIn, Gupy, páginas de carreira, Greenhouse, Lever, Ashby, InHire, Sólides e portais de fundos de venture capital. A busca é pelo meu perfil (gerente e head de operações, dados, processos, planejamento, receita e chief of staff), então isto é um recorte desse mercado, não o mercado de dados inteiro.</p>
+      <p>Esta é a coleta de {data(painel.coleta)}, com vagas publicadas entre {data(painel.janela[0])} e {data(painel.janela[1])}, já sem repetidas. Área e nível saem do título; ferramentas, inglês e salário saem do texto do anúncio, por regras simples. "Mostra o salário" exige a palavra salário ou remuneração perto do valor, para não contar vale-refeição. Os números são aproximados e a página publica só esses campos derivados: título, link e texto das vagas ficam fora.</p>
+      <p>É uma foto, não uma série. A ideia é atualizar a cada coleta e, com o tempo, mostrar o que muda.</p>
+    </section>
+  </main>
+</Base>
+
+<script is:inline type="application/json" id="dados-painel" set:html={JSON.stringify(painel.linhas)}></script>
+
+<script>
+  type Linha = { familia: string; nivel: string; modelo: string; fonte: string; ferramentas: string[]; ingles: boolean; salario: boolean };
+  const linhas: Linha[] = JSON.parse(document.getElementById("dados-painel")!.textContent!);
+  const selects = [...document.querySelectorAll<HTMLSelectElement>("select[data-filtro]")];
+  const limpar = document.querySelector<HTMLButtonElement>(".limpar")!;
+  const pct = (n: number, t: number) => (t ? `${Math.round((100 * n) / t)}%` : "–");
+
+  function contar(lista: Linha[], chave: keyof Linha) {
+    const m = new Map<string, number>();
+    for (const l of lista) for (const v of ([] as unknown[]).concat(l[chave]) as string[]) m.set(v, (m.get(v) ?? 0) + 1);
+    return [...m].sort((a, b) => b[1] - a[1]);
+  }
+
+  function barras(alvo: string, itens: [string, number][], total: number, limite = 99) {
+    const ul = document.querySelector<HTMLUListElement>(`[data-barras="${alvo}"]`)!;
+    const max = itens[0]?.[1] || 1;
+    ul.innerHTML = "";
+    for (const [nome, n] of itens.slice(0, limite)) {
+      const li = document.createElement("li");
+      li.style.setProperty("--v", String(n / max));
+      li.innerHTML = `<span class="rot"></span><span class="trilho"><span class="fill"></span></span><span class="val">${n} <small>${pct(n, total)}</small></span>`;
+      li.querySelector(".rot")!.textContent = nome;
+      ul.append(li);
+    }
+    if (!itens.length) ul.innerHTML = `<li class="vazio">Nenhuma vaga com esses filtros.</li>`;
+  }
+
+  function render() {
+    const ativos = selects.filter((s) => s.value);
+    const lista = linhas.filter((l) => ativos.every((s) => l[s.dataset.filtro as keyof Linha] === s.value));
+    const t = lista.length;
+    document.querySelector('[data-n="vagas"]')!.textContent = String(t);
+    document.querySelector('[data-n="ingles"]')!.textContent = pct(lista.filter((l) => l.ingles).length, t);
+    document.querySelector('[data-n="salario"]')!.textContent = pct(lista.filter((l) => l.salario).length, t);
+    barras("ferramentas", contar(lista, "ferramentas"), t, 15);
+    barras("modelo", contar(lista, "modelo"), t);
+    barras("familia", contar(lista, "familia"), t);
+    barras("nivel", contar(lista, "nivel"), t);
+    limpar.hidden = !ativos.length;
+  }
+
+  selects.forEach((s) => s.addEventListener("change", render));
+  limpar.addEventListener("click", () => { selects.forEach((s) => (s.value = "")); render(); });
+  render();
+</script>
+
+<style>
+  main { display: flex; flex-direction: column; gap: 40px; padding-block: 32px 88px; }
+  .voltar { font-size: 14px; color: var(--muted); text-decoration: none; }
+  .voltar:hover { color: var(--ink); }
+
+  .rotulo { margin: 0 0 14px; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  h1 {
+    margin: 0; max-width: 18ch;
+    font-size: clamp(32px, 6vw, 72px); font-weight: 800; font-stretch: 115%;
+    line-height: .95; letter-spacing: -.025em; text-transform: uppercase;
+  }
+  .resumo { margin: 20px 0 0; max-width: 60ch; font-size: 18px; }
+
+  .filtros { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: end; }
+  .filtros label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--muted); }
+  .filtros select {
+    font: inherit; font-size: 15px; color: var(--ink); background: transparent;
+    border: 1px solid var(--ink); border-radius: 0; padding: 8px 32px 8px 10px; min-width: 190px;
+    appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--ink) 50%), linear-gradient(135deg, var(--ink) 50%, transparent 50%);
+    background-position: right 14px center, right 9px center; background-size: 5px 5px; background-repeat: no-repeat;
+  }
+  .limpar { font: inherit; font-size: 14px; background: none; border: 0; padding: 8px 0; text-decoration: underline; cursor: pointer; color: var(--ink); }
+
+  .numeros {
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin: 0; border-block: 1px solid var(--ink);
+  }
+  .numeros div { padding: 18px 20px 20px 0; border-right: 1px solid var(--line); }
+  .numeros div + div { padding-left: 20px; }
+  .numeros div:last-child { border-right: 0; }
+  .numeros dt { font-size: 13px; color: var(--muted); }
+  .numeros dd {
+    margin: 6px 0 0;
+    font-size: clamp(26px, 3.4vw, 40px); font-weight: 800; font-stretch: 110%;
+    line-height: 1; letter-spacing: -.01em; font-variant-numeric: tabular-nums;
+  }
+
+  h2 { margin: 0; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .nota { margin: 6px 0 0; font-size: 14px; color: var(--muted); }
+  .bloco .barras { margin-top: 16px; }
+
+  .trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; }
+
+  .barras { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .barras :global(li) { display: grid; grid-template-columns: 150px minmax(0, 1fr) 84px; gap: 12px; align-items: center; font-size: 15px; }
+  .barras.curtas :global(li) { grid-template-columns: 1fr 84px; grid-template-rows: auto 8px; gap: 4px 12px; }
+  .barras.curtas :global(.rot) { grid-column: 1; }
+  .barras.curtas :global(.trilho) { grid-column: 1 / -1; grid-row: 2; }
+  .barras.curtas :global(.val) { grid-column: 2; grid-row: 1; }
+  .barras :global(.trilho) { height: 12px; background: var(--line); }
+  .barras.curtas :global(.trilho) { height: 8px; }
+  .barras :global(.fill) { display: block; height: 100%; width: calc(var(--v) * 100%); background: var(--ink); transition: width .4s ease; }
+  .barras :global(.val) { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .barras :global(.val small) { font-weight: 400; color: var(--muted); font-size: 13px; margin-left: 4px; }
+  .barras :global(.vazio) { display: block; color: var(--muted); }
+
+  .empresas { list-style: none; margin: 16px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 40px; border-top: 1px solid var(--ink); }
+  .empresas li { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 17px; font-weight: 700; font-stretch: 105%; }
+  .empresas .qtd { font-weight: 400; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  .metodo { border-top: 1px solid var(--ink); padding-top: 18px; max-width: 72ch; }
+  .metodo p { margin: 12px 0 0; font-size: 14px; color: var(--muted); line-height: 1.55; }
+
+  @media (prefers-reduced-motion: reduce) { .barras :global(.fill) { transition: none; } }
+
+  @media (max-width: 760px) {
+    .numeros { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .numeros div:nth-child(2) { border-right: 0; }
+    .numeros div + div:nth-child(odd) { padding-left: 0; }
+    .numeros div:nth-child(n+3) { border-top: 1px solid var(--line); }
+    .trio, .empresas { grid-template-columns: 1fr; }
+    .barras :global(li) { grid-template-columns: 110px minmax(0, 1fr) 72px; gap: 8px; font-size: 14px; }
+    .filtros label, .filtros select { width: 100%; }
+  }
+</style>
