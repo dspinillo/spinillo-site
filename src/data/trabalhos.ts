@@ -34,8 +34,8 @@ export const pilares: Pilar[] = [
         linha: "Visita fantasma e proposta fria rendiam incentivo indevido a corretores. Regras em cima do funil passaram a pegar o padrão.",
       },
       {
-        titulo: "O mercado de vagas de dados", onde: "painel", numero: "608 vagas, 417 empresas",
-        linha: "Vagas de dados coletadas em vários portais, numa foto da semana: quem contrata, com que ferramentas e em que modelo.",
+        titulo: "O mercado de vagas de dados", onde: "painel", numero: "em breve",
+        linha: "Em construção: vagas de dados coletadas em vários portais, numa foto da semana de quem contrata, com que ferramentas e em que modelo.",
       },
     ],
   },
