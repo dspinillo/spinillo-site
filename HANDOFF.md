@@ -36,6 +36,12 @@ Build:    npm run build (Astro 7, exige Node >= 22.23); deploy por push na main
 4. [x] Pendências de conteúdo respondidas em 08/11 (noite). Sobrou só: Omie, o que eram os 18% que não bateram (cartão escondido até ele lembrar).
 5. [ ] Outro repo, outra sessão: levar os hooks de higiene de contexto (`~/dh/scripts/hooks/session-context-nudge.sh` e `session-compact-nudge.sh`) para o plugin `~/oraculo-flow` (já tem `hooks/oraculo-hooks.json`; usar `${CLAUDE_PLUGIN_ROOT}`, subir versão, CHANGELOG) e tirar os dois do `~/.claude/settings.json` para não avisar em dobro. Depois, ajustar o texto do case do Oráculo.
 
+## Painel (F3, no ar em 09/11)
+
+- Atualizar: `node scripts/exportar-painel.mjs` (lê `~/dh/projects/career-copilot/vagas/raw.json`, grava `src/data/painel.json`), build, commit e push. Atualizar também o número da linha do painel em `src/data/trabalhos.ts`.
+- O JSON público tem só campos derivados por vaga (área, nível, modelo, fonte, ferramentas, inglês, salário) e o top 12 de empresas. Título, link e texto do anúncio nunca saem do exportador.
+- Recorte: a coleta é do perfil dele (liderança em operação, dados, processos, receita), não o mercado de dados inteiro; a nota de método diz isso.
+
 ## Cuidados extras desta fase
 
 - `npm run build` agora roda `scripts/checar-publicacao.mjs`: falha se houver `Para você preencher`, `REVISAR` ou travessão no `dist`. Notas de revisão vão no campo `revisar` do frontmatter (nunca renderizado), não em comentário HTML: o processador de Markdown do Astro 7 publica os comentários.
