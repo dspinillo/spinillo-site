@@ -29,7 +29,7 @@ quebrou:
   titulo: As portarias.
   texto: "Um parceiro reclamou que não tinha recebido. Nos logs de ajuste, achei contas bancárias e destinatários alterados, cerca de R$ 100 mil já pagos. Dimensionei, montei o dossiê para o Jurídico e o Compliance, e ainda deu para barrar cerca de R$ 5 mil. A lição: regra no funil pega quem fabrica volume, não quem mexe no destino do dinheiro. Esse alerta tem que estar no cadastro, antes do pagamento."
 confiabilidade:
-  texto: "[Para você preencher.] Como você evitou barrar corretor honesto? Por exemplo: quem revisava o caso antes do bloqueio, quantos alertas viravam bloqueio de fato, como o valor de R$ 30 a 50 mil foi calculado."
+  texto: "Não era um modelo mirabolante, e não dá para cravar que nenhum honesto foi incomodado. Olhávamos corretores com conversão de visita e de proposta muito fora da média e da mediana, ou com propostas recorrentes bem abaixo do desconto normal, que ficava entre 15% e 20%. Quem chamava a atenção entrava numa espécie de quarentena: ficava sob observação, e a análise ia mais a fundo antes de qualquer bloqueio."
 ---
 
 ## Problema

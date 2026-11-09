@@ -13,7 +13,7 @@ numeros:
     rotulo: situações, com folga, no prazo e fora
   - valor: "1 pergunta"
     rotulo: no lugar de 4 ou 5 abas
-stack: [Google Apps Script, Databricks, Lakehouse, SQL, IA]
+stack: [Google Apps Script, Databricks, Lakehouse, SQL, IA, Claude Code]
 figura:
   tipo: colunas
   titulo: Guias entregues, por dias antes do vencimento
@@ -37,11 +37,10 @@ figura:
     - { texto: "**No dia do vencimento:** a maior pilha. Conta como no prazo, mas o cliente não tem tempo de se planejar.", de: 1, ate: 7, topo: 6, tom: accent }
   legenda: "Dados ilustrativos. O desenho segue o que o painel mostrava: muita entrega concentrada no último dia. A meta passou a ser a área preta, 72 horas ou mais antes."
 quebrou:
-  texto: "[Para você preencher.] O que deu errado? Candidatos: cache servindo dado velho, limite de execução do Apps Script, o chat respondendo algo que a tabela não sustentava."
+  titulo: A guia que não tinha nome.
+  texto: "O Gestta não tinha um campo dizendo o que era tarefa de guia e o que era tarefa comum. O Claude Code montou um de-para com tudo o que parecia guia, e mesmo assim veio sujeira: foi preciso lapidar a lista com a operação. E a primeira versão mostrava informação demais, que não ajudava ninguém a decidir. Fomos cortando até ficar só o que gerava ação. Qualidade, não volume."
 confiabilidade:
-  texto: "[Para você preencher.] Como você garantiu que a resposta do chat batia com o painel? Por exemplo: o chat lia os mesmos dados agregados, os números vinham de consulta e não da IA, alguém conferiu respostas por amostra."
-revisar:
-  - "explicar a camada de dados. Como o Apps Script lia o lakehouse (API SQL do Databricks? export agendado?), como era o cache (CacheService? planilha intermediária?), de quanto em quanto tempo atualizava e por que o cache foi necessário."
+  texto: "O chat consome exatamente o que o usuário vê no painel, com as mesmas regras de acesso. A IA não calcula nada: lê números já calculados. E uma bateria de avaliações confere que as respostas não inventam o que não está nos dados."
 ---
 
 ## Problema
@@ -61,6 +60,10 @@ Um painel só das guias, em Google Apps Script, lendo o lakehouse do Databricks,
 Ele desce da empresa por departamento, carteira, origem do cliente e tipo de guia, até o cliente. Não chega ao operador: a pergunta aqui é o que o cliente sente, não quem atrasou.
 
 > Entregar no prazo é o mínimo. Entregar com folga é o serviço.
+
+## Como o dado chega
+
+O Apps Script lê o lakehouse direto, com um token do Databricks. Para não consultar o warehouse a cada clique, a aplicação guarda um cache que se renova a cada cerca de 3 horas, no mesmo ritmo da atualização das tabelas. O cabeçalho sempre mostra o horário da última atualização: quem olha sabe de quando é o número.
 
 ## Um chat no lugar das abas
 

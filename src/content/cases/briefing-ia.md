@@ -29,11 +29,9 @@ figura:
   legenda: "Exemplo fictício, no formato do briefing real. O job roda no Databricks com nova tentativa automática, e a chamada ao modelo tem um provedor reserva."
 quebrou:
   titulo: O modelo que escapava para o chinês.
-  texto: "Um dos modelos mais promissores, bom de texto e barato, às vezes soltava caracteres chineses no meio do português. Num resumo lido de manhã pela gestão, uma vez basta para ninguém mais confiar. Saiu da disputa, e trocar de idioma virou critério fixo de avaliação."
+  texto: "Um dos modelos mais promissores, bom de texto e barato, às vezes soltava caracteres chineses no meio do português, e ainda demorava a responder. Num resumo lido de manhã pela gestão, uma vez basta para ninguém mais confiar. Saiu da disputa, e trocar de idioma virou critério fixo de avaliação."
 confiabilidade:
-  texto: "[Para você preencher.] Como você conferia que o texto batia com os números? Por exemplo: amostra de briefings revisada contra a consulta de origem, quem conferia nas primeiras semanas, o que acontecia quando a IA falhava."
-revisar:
-  - "o modelo do chinês saiu da disputa, ou ficou com um filtro em código? Teve mais alguma coisa que quebrou depois que o briefing entrou no ar?"
+  texto: "Duas camadas. Uma bateria de avaliações confere que o texto não inventa nada que não esteja no pacote de fatos. E a camada de código faz toda a conta antes, então a IA nunca tem a chance de errar um número: ela só o repete."
 ---
 
 ## Problema
@@ -49,3 +47,9 @@ Troquei o painel por um briefing escrito, com uma divisão rígida de trabalho. 
 Antes de escolher, testei cerca de 18 modelos com dados reais: latência, custo, profundidade, alucinação e troca de idioma. Fiquei com dois, um rápido e barato para o diário e um mais capaz para o semanal.
 
 > O SQL calcula, a IA escreve. Nunca o contrário.
+
+## Como roda
+
+Não é um chat. Todo dia de manhã, um job no Databricks monta um pacote de fatos para cada gestor, manda para o modelo pela OpenRouter, recebe o texto e grava numa tabela gold. O painel só lê essa tabela.
+
+Por isso a latência não era crítica como num chat, mas importava: se o job atrasasse, o expediente começava sem o resumo do dia.

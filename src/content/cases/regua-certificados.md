@@ -25,14 +25,12 @@ figura:
     - { nome: Zapier, nota: "Percorre cliente por cliente.", destaque: true }
     - { nome: Pipefy, nota: "Um card por cliente, na etapa certa." }
     - { nome: SendGrid, nota: "O e-mail certo para cada situação." }
-  volta: "Quando o cliente responde, um webhook recebe a resposta e preenche o card: datas, o que ele disse e em que etapa está."
+  volta: "Quando o cliente responde, um webhook atualiza o card sozinho: quantos follow-ups foram enviados, a data do último, se o cliente respondeu e quando."
 quebrou:
   titulo: O primeiro disparo grande.
   texto: "No primeiro envio, de cerca de mil e-mails, o servidor do Google travou depois de 200 ou 300 e bloqueou o envio de todos os projetos da conta. Por sugestão de um engenheiro, migrei para a API do SendGrid em dois dias. Ferramenta de escritório aguenta o piloto. Escala pede serviço feito para isso."
 confiabilidade:
-  texto: "[Para você preencher.] Como você garantiu que o cliente certo recebia o e-mail certo? Por exemplo: conferência da lista contra a base de certificados, teste com amostra antes de ligar, o que acontecia quando um card dava erro."
-revisar:
-  - "quais campos o webhook de resposta preenchia (data de agendamento? tipo de certificado?) e de onde vinha a resposta (formulário, resposta ao e-mail?)."
+  texto: "A régua usava a base oficial de contatos de clientes da empresa, e a premissa era que o cadastro estava certo. Quando o contato errado recebia e respondia, o pedido de correção ia para o cadastro, não para a régua. Assim a fonte melhorava com o uso, em vez de cada automação manter a sua própria lista."
 ---
 
 ## Problema

@@ -5,12 +5,12 @@ periodo: Head de Dados
 sintese:
   problema: "Os contratos do ERP e os do lakehouse não batiam, e o financeiro exportava relatório na mão."
   feito: "Tratei a divergência como bug: conciliação contrato a contrato até achar IDs diferentes e joins errados na ingestão."
-  resultado: "Validação de 0% para 82% dos contratos, com 99,9% de acurácia, e o fim da exportação manual."
+  resultado: "De 0% para 82% dos registros batendo, com 99,9% de acurácia nos valores, e o fim da exportação manual."
 numeros:
   - valor: "0% → 82%"
-    rotulo: dos contratos validados entre ERP e lakehouse
+    rotulo: dos registros batendo entre ERP e lakehouse
   - valor: "99,9%"
-    rotulo: de acurácia na base validada
+    rotulo: de acurácia nos valores
   - valor: "0"
     rotulo: exportações manuais depois do ajuste
 stack: [Omie, Databricks, Lakehouse, SQL]
@@ -18,21 +18,21 @@ figura:
   tipo: barras
   titulo: Contratos que batem entre o ERP e o lakehouse
   grupos:
-    - titulo: Validação
+    - titulo: Registros batendo
       max: 100
       itens:
         - { rotulo: Antes, valor: 0, texto: "0%" }
         - { rotulo: Depois do ajuste, valor: 82, texto: "82%", tom: ink }
-    - titulo: Acurácia na base validada
+    - titulo: Acurácia nos valores
       max: 100
       itens:
         - { rotulo: Depois do ajuste, valor: 99.9, texto: "99,9%", tom: ink }
 quebrou:
   texto: "[Para você preencher.] Os 18% que não validaram: o que eram, e o que se fez com eles?"
 confiabilidade:
-  texto: "[Para você preencher.] Como você mostrou ao financeiro que podia confiar? Por exemplo: relatório de conciliação recorrente, amostra conferida com eles, alerta quando a divergência voltava a subir."
+  texto: "Depois do ajuste, deixamos as bases rodando por uma semana lado a lado com o relatório do financeiro. Quando a quantidade de lançamentos e os valores totais bateram todos os dias, o time passou a usar a base do lakehouse."
 revisar:
-  - "confirmar o que são os 82% e os 99,9%, se a correção da ingestão foi do seu time ou da engenharia de dados, e se \"0 exportações manuais\" é verdade ou se sobrou alguma."
+  - "Os 82% e os 99,9% vêm só do CV (\"82% dos registros, 99,9% de acurácia nos valores\"); nenhum documento explica os 18% restantes nem quem corrigiu a ingestão. O cartão de O que quebrou fica escondido até ele lembrar."
 ---
 
 ## Problema

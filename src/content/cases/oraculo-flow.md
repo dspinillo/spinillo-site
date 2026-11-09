@@ -37,7 +37,7 @@ links:
   - rotulo: Código no GitHub
     url: https://github.com/dspinillo/oraculo-flow
 revisar:
-  - "os hooks moram no seu dh (scripts/hooks/) e no settings global, não no plugin público. Se quiser, dá para levar para o plugin e citar como parte dele."
+  - "Quando os hooks entrarem no plugin público (tarefa no ~/oraculo-flow), trocar o texto para dizer que vêm com o plugin."
 ---
 
 ## Problema

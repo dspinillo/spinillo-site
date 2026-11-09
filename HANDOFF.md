@@ -33,7 +33,8 @@ Build:    npm run build (Astro 7, exige Node >= 22.23); deploy por push na main
    - `astro.config.mjs`: `site: "https://spinillo.com.br"`, `base: "/"`. Conferir links com `import.meta.env.BASE_URL`.
    - UOL (painel de DNS): no raiz, 4 registros A para 185.199.108.153, 185.199.109.153, 185.199.110.153 e 185.199.111.153; `www` CNAME para `dspinillo.github.io`. NUNCA trocar NS nem tocar no MX. Ele loga no painel; eu guio pelo navegador.
    - Esperar propagação (`dig spinillo.com.br +short`), depois ligar "Enforce HTTPS" no Pages.
-4. [ ] Pendências de conteúdo (respostas dele): campo `revisar` no frontmatter de cada case e cartões `[Para você preencher.]`. Os cartões vazios não aparecem no site; dá para publicar antes e completar depois.
+4. [x] Pendências de conteúdo respondidas em 08/11 (noite). Sobrou só: Omie, o que eram os 18% que não bateram (cartão escondido até ele lembrar).
+5. [ ] Outro repo, outra sessão: levar os hooks de higiene de contexto (`~/dh/scripts/hooks/session-context-nudge.sh` e `session-compact-nudge.sh`) para o plugin `~/oraculo-flow` (já tem `hooks/oraculo-hooks.json`; usar `${CLAUDE_PLUGIN_ROOT}`, subir versão, CHANGELOG) e tirar os dois do `~/.claude/settings.json` para não avisar em dobro. Depois, ajustar o texto do case do Oráculo.
 
 ## Cuidados extras desta fase
 

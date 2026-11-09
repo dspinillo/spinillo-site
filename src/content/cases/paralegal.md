@@ -26,9 +26,10 @@ figura:
     - { nome: SendGrid, nota: "Os e-mails de cada etapa saem sozinhos." }
   legenda: "Serviços cobertos: abertura de empresa e de offshore, filiais e inscrições, encerramento, mudança de endereço e registro de atas."
 quebrou:
-  texto: "[Para você preencher.] O que deu errado? Candidatos: card duplicado quando a venda era editada, um caminho do Zapier que não previa um tipo de serviço, limite de tarefas do plano do Zapier."
+  titulo: Os campos que ninguém queria preencher.
+  texto: "No começo, criei muitos campos de controle para ter informação, e quase todos eram preenchidos à mão. A carga cognitiva subiu e a operação não gostou. Mudei a conversa para uma troca: você precisa da informação X? Preenchendo Y e Z, eu automatizo estes outros processos manuais. Quando o ganho ficou visível, o campo deixou de ser imposição."
 confiabilidade:
-  texto: "[Para você preencher.] Como você sabia que a automação tinha rodado certo? Por exemplo: o ID do Pipedrive para conferir venda contra card, alerta de erro do Zapier, quem olhava as falhas."
+  texto: "O Zapier registra cada execução e avisa quando algo falha ou precisa de nova tentativa. Eu recebia esses alertas por e-mail e, nos processos mais críticos, montei uma automação que também me avisava no Slack."
 ---
 
 ## Problema
@@ -43,4 +44,6 @@ Primeiro, o mais simples: um campo no Pipefy com o ID do negócio no Pipedrive. 
 
 Em cima disso, a esteira inteira com o que a empresa já tinha. Fechou a venda, o Zapier cria os cards certos e preenche cliente, serviço e detalhes. Foram mais de 30 automações.
 
-> Volume menor que o dos certificados, complexidade maior: cada serviço tem as suas etapas.
+Volume menor que o dos certificados, complexidade maior: cada serviço tem as suas etapas.
+
+> Mostrar o ganho funciona melhor do que impor o campo.

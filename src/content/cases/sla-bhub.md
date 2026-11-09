@@ -15,14 +15,12 @@ numeros:
     rotulo: gestores usando o painel
   - valor: "170 mil+"
     rotulo: tarefas acompanhadas
-stack: [Databricks Apps, Lakehouse, SQL, Claude Code, GitHub]
+stack: [Databricks Apps, Lakehouse, dbt, SQL, IA, Claude Code, GitHub]
 quebrou:
   titulo: O responsável errado.
-  texto: "Para cobrar uma tarefa, é preciso saber de quem ela é. A base de responsáveis não batia com a alocação dos times em meados de 80% da carteira. Um acompanhamento diário da divergência levou esse número para meados de 40% em três meses."
+  texto: "Para cobrar uma tarefa, é preciso saber de quem ela é. A base de responsáveis não batia com a alocação dos times em meados de 80% da carteira. Criei tabelas de snapshot e gold no dbt para acompanhar, dia a dia, a correção e as inconsistências. Em três meses, a divergência caiu para meados de 40%, junto com a subida do SLA."
 confiabilidade:
-  texto: "[Para você preencher.] Como você garantiu que o número do painel era o mesmo que a operação via? Por exemplo: conferência por amostra, regra de cálculo acordada com os gestores, o que fazia uma tarefa entrar ou sair da conta."
-revisar:
-  - "confirmar se a correção dos responsáveis andou junto com o trabalho do SLA. Se foi outra frente, o cartão sai. Nas notas consta chat de IA também neste painel: entra aqui ou fica só no de guias?"
+  texto: "Todo dia eu conferia os jobs que atualizavam as tabelas do Gestta e, por consequência, os que alimentavam o lake nas camadas bronze, silver e gold. E comparava o volume de cada tabela com o do dia anterior. Um salto grande podia ser base nova ou sujeira. Uma queda grande, um arquivo que chegou incompleto na bronze. Número que muda demais de um dia para o outro é investigado antes de chegar ao gestor."
 ---
 
 ## Problema
@@ -37,6 +35,7 @@ Um painel no Databricks Apps, em cima do lakehouse, que responde a duas pergunta
 
 - **Onde está o atraso hoje.** Por departamento (contábil, fiscal e DP): no prazo, fora do prazo ou em aberto. Cada pessoa vê o que é seu. O gerente desce até o operador; o coordenador vê a própria equipe.
 - **Onde ele vai estar.** Tudo o que vai vencer, dia a dia, dividido pelas pessoas de cada carteira. Um pico de 100 tarefas por analista se resolve com antecedência, nunca no dia.
+- **Um chat em cima de tudo.** Em vez de navegar por abas, o gestor pergunta ao painel e recebe a resposta com os mesmos dados que ele já pode ver.
 
 Cerca de 50 gestores usavam o painel, e ele entrou nos rituais diários. Quem fez o SLA subir foi a operação. O papel dos dados foi mostrar onde.
 
