@@ -50,9 +50,16 @@ const casos = new Set((await getCollection("cases")).map((c) => c.id));
         <h2><sup>({pad(secoes.length + 1)})</sup> Sobre</h2>
       </header>
       <div class="texto">
-        <p>Há 23 anos trabalho entre negócio e dados, sempre olhando para processos e números, levantando hipóteses e resolvendo problemas da operação.</p>
-        <p>Na Glovo, cuidei do analytics de operações no Brasil durante o hipercrescimento: SLAs, unit economics, forecast de demanda e antifraude. Na Loft, liderei 16 pessoas em Analytics e Payments no canal de corretores. Na BHub, criei do zero uma linha de negócio que chegou a cerca de 5 mil clientes, montei as automações que rodavam mais de 100 mil tarefas por mês e, como Head de Dados, coloquei IA em produção com uma regra simples: o SQL calcula, a IA escreve e cada frase aponta para a origem.</p>
-        <p>Os projetos pessoais desta página existem pelo mesmo motivo: quando a ferramenta não existe, eu construo.</p>
+        <dl class="numeros">
+          <div><dt>de carreira</dt><dd>23 anos</dd></div>
+          <div><dt>pessoas lideradas</dt><dd>16</dd></div>
+          <div><dt>de SLA na BHub</dt><dd>60% → ~90%</dd></div>
+          <div><dt>tarefas por mês automatizadas</dt><dd>100 mil+</dd></div>
+        </dl>
+        <p>Há 23 anos trabalho entre negócio e dados, 13 deles em startups. Faço as duas coisas: lidero time e executo sozinho. Já liderei 16 pessoas, e também já levei sozinho um projeto do SQL ao agente em produção.</p>
+        <p><strong>Liderando.</strong> Na Glovo, cuidei do analytics de operações no Brasil durante o hipercrescimento: SLAs, unit economics, forecast de demanda e antifraude. Na Loft, liderei 16 pessoas em Analytics e Payments e montei a célula que barrava de R$ 30 a 50 mil por mês em incentivos indevidos. Na BHub, como Head de Dados, levei o SLA da operação de 60% para perto de 90%, com um painel usado por cerca de 50 gestores.</p>
+        <p><strong>Executando.</strong> Também na BHub, criei do zero uma linha de negócio que chegou a cerca de 5 mil clientes e montei com as minhas mãos as automações que rodavam mais de 100 mil tarefas por mês. Só a régua de certificados tirou 5 horas por dia de trabalho manual, sem contratar ninguém. Coloquei IA em produção com uma regra simples: o SQL calcula, a IA escreve e cada frase aponta para a origem.</p>
+        <p>Os projetos pessoais desta página vêm do mesmo hábito: quando a ferramenta não existe, eu construo.</p>
         <a class="botao" href={`${base}/cv/dhiego-spinillo-cv.pdf`}>Baixar CV em PDF <span aria-hidden="true">↗</span></a>
       </div>
     </section>
@@ -128,6 +135,19 @@ const casos = new Set((await getCollection("cases")).map((c) => c.id));
 
   .sobre .texto { display: flex; flex-direction: column; gap: 14px; max-width: 68ch; }
   .sobre .texto p { margin: 0; }
+  .sobre .numeros {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 0 0 10px; border-block: 1px solid var(--ink);
+  }
+  .sobre .numeros div { padding: 16px 16px 18px 0; }
+  .sobre .numeros div:nth-child(even) { padding-left: 16px; border-left: 1px solid var(--line); }
+  .sobre .numeros div:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .sobre .numeros dt { font-size: 13px; color: var(--muted); }
+  .sobre .numeros dd {
+    margin: 6px 0 0;
+    font-size: clamp(21px, 3vw, 36px); font-weight: 800; font-stretch: 110%; white-space: nowrap;
+    line-height: 1; letter-spacing: -.01em; font-variant-numeric: tabular-nums;
+  }
 
   @media (max-width: 860px) {
     .hero { grid-template-columns: minmax(0, 1fr); gap: 28px; }
