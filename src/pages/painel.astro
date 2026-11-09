@@ -1,6 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import painel from "../data/painel.json";
+import Fluxo from "../components/figuras/Fluxo.astro";
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const data = (iso: string) => iso.split("-").reverse().slice(0, 2).join("/");
@@ -24,6 +25,7 @@ const filtros = [
       <p class="rotulo">Painel · coleta de {data(painel.coleta)}</p>
       <h1>O mercado de liderança em operação e dados</h1>
       <p class="resumo">Uma foto das vagas abertas para gerente, head e coordenação em operação, dados, processos e receita: o que pedem, onde é o trabalho e quem está contratando. Filtre para ver a sua fatia.</p>
+      <a class="ancora" href="#como">Como o coletor funciona ↓</a>
     </header>
 
     <div class="filtros" role="group" aria-label="Filtros">
@@ -75,16 +77,77 @@ const filtros = [
       </ol>
     </section>
 
-    <section class="metodo">
-      <h2>Como foi feito</h2>
-      <p>As vagas vêm do coletor que uso na minha própria busca, rodando em {fontes} fontes: LinkedIn, Gupy, páginas de carreira, Greenhouse, Lever, Ashby, InHire, Sólides e portais de fundos de venture capital. A busca é pelo meu perfil (gerente e head de operações, dados, processos, planejamento, receita e chief of staff), então isto é um recorte desse mercado, não o mercado de dados inteiro.</p>
-      <p>Esta é a coleta de {data(painel.coleta)}, com vagas publicadas entre {data(painel.janela[0])} e {data(painel.janela[1])}, já sem repetidas. Área e nível saem do título; ferramentas, inglês e salário saem do texto do anúncio, por regras simples. "Mostra o salário" exige a palavra salário ou remuneração perto do valor, para não contar vale-refeição. Os números são aproximados e a página publica só esses campos derivados: título, link e texto das vagas ficam fora.</p>
-      <p>É uma foto, não uma série. A ideia é atualizar a cada coleta e, com o tempo, mostrar o que muda.</p>
+    <section class="como" id="como">
+      <h2 class="grande">Como funciona</h2>
+      <p class="lead">Os números acima saem de um coletor que escrevi para a minha própria busca. Ele não depende de alerta de portal: vai atrás das vagas nas fontes, lê o anúncio inteiro e decide o que entra.</p>
+
+      <Fluxo
+        titulo="Uma coleta, da fonte ao painel"
+        etapas={[
+          { nome: "Catálogo", nota: "1.321 empresas, com o site, a página de carreiras e o sistema de vagas de cada uma." },
+          { nome: "Coleta", nota: `${fontes} fontes, sem login, devagar. Cerca de 40 minutos.` },
+          { nome: "Filtro", nota: "Nível e área no título, Brasil ou remoto, publicada nos últimos 21 dias." },
+          { nome: "Repetidas", nota: "A mesma vaga em três lugares vira uma.", destaque: true },
+          { nome: "Sinais", nota: "Regras leem o texto: inglês, modelo, salário, ferramentas." },
+          { nome: "Painel", nota: "Sai só o campo derivado. Título, link e texto ficam comigo." },
+        ]}
+        volta="Cada coleta nova substitui a foto. A triagem vaga a vaga, com IA e memória de descarte, é o Radar de Vagas."
+      />
+
+      <div class="detalhes">
+        <section>
+          <h3>Onde procura</h3>
+          <p>Três jeitos de chegar na vaga. Busca por termo nos agregadores: 35 termos no Gupy, 29 no LinkedIn (a página pública, sem conta) e alguns na Sólides. Leitura direta dos sistemas de vagas de cerca de 290 empresas (Greenhouse, Lever, Ashby, InHire e Digai), que publicam a lista completa em JSON. E as páginas de carreira próprias, achadas por um script que percorre o catálogo, adivinha o site, encontra o link de carreiras e identifica qual sistema está embutido ali.</p>
+        </section>
+        <section>
+          <h3>O que entra</h3>
+          <p>O título precisa ter as duas coisas: um nível (gerente, head, coordenação, especialista) e uma área compatível (dados, operação, processos, planejamento, receita, IA). E não pode cair numa lista de exclusão: estágio, júnior, vendas de campo, indústria, logística, engenharia de software. Fica a vaga no Brasil ou remota, publicada nas últimas três semanas.</p>
+        </section>
+        <section>
+          <h3>Repetidas</h3>
+          <p>A mesma vaga aparece no LinkedIn, no Gupy e no site da empresa. A chave é empresa mais título, sem acento e sem pontuação. Quando há empate, ganha a versão do sistema da própria empresa, que tem a descrição completa e o link direto; depois o LinkedIn, que informa senioridade; por último o Gupy.</p>
+        </section>
+        <section>
+          <h3>Educado com as fontes</h3>
+          <p>Uma pausa de 250 a 500 ms entre chamadas e, quando o site pede calma (HTTP 429), espera de 5, 15 e 30 segundos antes de desistir. Nada de login nem de conta falsa. Por isso a coleta completa leva cerca de 40 minutos, e tudo bem: roda enquanto eu faço outra coisa.</p>
+        </section>
+        <section>
+          <h3>Sinais no texto</h3>
+          <p>Expressões regulares marcam o que importa na triagem: inglês fluente ou só desejável, o modelo de trabalho que o texto diz (às vezes diferente do campo do portal), Python exigido ou diferencial, vaga de consultoria alocando em cliente, seleção interna. São marcas para ler com atenção, não veredito. Área, nível, ferramentas e salário deste painel saem do mesmo jeito.</p>
+        </section>
+        <section>
+          <h3>O que é público</h3>
+          <p>Um exportador lê a coleta na minha máquina e grava só os campos derivados de cada vaga, mais as empresas que mais contratam. Título, link e texto do anúncio nunca saem dele, e os filtros desta página rodam no seu navegador sobre esse arquivo.</p>
+        </section>
+      </div>
+
+      <div class="limites">
+        <h3>Limites</h3>
+        <p>A busca é pelo meu perfil, então isto é um recorte do mercado de liderança em operação e dados, não o mercado de dados inteiro. Esta é a coleta de {data(painel.coleta)}, com vagas publicadas entre {data(painel.janela[0])} e {data(painel.janela[1])}. As regras erram nas pontas: "mostra o salário" exige a palavra salário ou remuneração perto do valor, para não contar vale-refeição, e mesmo assim pega uma ou outra. É uma foto, não uma série; a ideia é atualizar a cada coleta e, com o tempo, mostrar o que muda.</p>
+        <a class="seta" href={`${base}/cases/radar-de-vagas/`}>Como o Radar faz a triagem vaga a vaga →</a>
+      </div>
     </section>
   </main>
 </Base>
 
 <script is:inline type="application/json" id="dados-painel" set:html={JSON.stringify(painel.linhas)}></script>
+
+<script>
+  // Mesma regra das páginas de case: a figura se desenha quando entra na tela.
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches && "IntersectionObserver" in window) {
+    const obs = new IntersectionObserver((entradas) => {
+      entradas.forEach((e) => {
+        if (!e.isIntersecting) return;
+        (e.target as HTMLElement).dataset.anim = "on";
+        obs.unobserve(e.target);
+      });
+    }, { threshold: 0.3 });
+    document.querySelectorAll<HTMLElement>(".fig-anim").forEach((f) => {
+      f.dataset.anim = "off";
+      obs.observe(f);
+    });
+  }
+</script>
 
 <script>
   type Linha = { familia: string; nivel: string; modelo: string; fonte: string; ferramentas: string[]; ingles: boolean; salario: boolean };
@@ -144,6 +207,7 @@ const filtros = [
     line-height: .95; letter-spacing: -.025em; text-transform: uppercase;
   }
   .resumo { margin: 20px 0 0; max-width: 60ch; font-size: 18px; }
+  .ancora { display: inline-block; margin-top: 14px; font-weight: 700; color: var(--ink); }
 
   .filtros { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: end; }
   .filtros label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--muted); }
@@ -192,8 +256,16 @@ const filtros = [
   .empresas li { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 17px; font-weight: 700; font-stretch: 105%; }
   .empresas .qtd { font-weight: 400; color: var(--muted); font-variant-numeric: tabular-nums; }
 
-  .metodo { border-top: 1px solid var(--ink); padding-top: 18px; max-width: 72ch; }
-  .metodo p { margin: 12px 0 0; font-size: 14px; color: var(--muted); line-height: 1.55; }
+  .como { border-top: 1px solid var(--ink); padding-top: 24px; display: flex; flex-direction: column; gap: 32px; }
+  .como .grande { font-size: clamp(26px, 3.4vw, 40px); letter-spacing: -.01em; text-transform: uppercase; color: var(--ink); font-weight: 800; font-stretch: 115%; }
+  .lead { margin: -16px 0 0; max-width: 64ch; font-size: 18px; }
+  .detalhes { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 28px 40px; }
+  .detalhes section { border-top: 1px solid var(--line); padding-top: 14px; }
+  h3 { margin: 0; font-size: 15px; font-weight: 700; }
+  .detalhes p, .limites p { margin: 8px 0 0; font-size: 15px; line-height: 1.55; }
+  .limites { max-width: 72ch; }
+  .limites p { color: var(--muted); font-size: 14px; }
+  .limites .seta { display: inline-block; margin-top: 14px; font-weight: 700; color: var(--ink); }
 
   @media (prefers-reduced-motion: reduce) { .barras :global(.fill) { transition: none; } }
 
