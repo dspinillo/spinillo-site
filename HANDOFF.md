@@ -26,7 +26,7 @@ Build:    npm run build (Astro 7, exige Node >= 22.23); deploy por push na main
 
 ## Próxima ação (checklist)
 
-1. [ ] Escolher a frase do topo da home (opções na última sessão; recomendada: "Liderei times de dados e operação na Glovo, na Loft e na BHub, e ponho a mão no código: painel, automação e agente de IA.").
+1. [x] Frase do topo escolhida em 08/11: a recomendada (dados e operação + mão no código).
 2. [ ] Merge da `f1-home` na `main` (ele aprovou em 08/11): o deploy vai para dspinillo.github.io/spinillo-site. Conferir no celular.
 3. [ ] T1.4 domínio, nesta ordem:
    - GitHub, Settings → Pages → Custom domain: `spinillo.com.br` (cria o arquivo CNAME; manter também `public/CNAME` no repo).
